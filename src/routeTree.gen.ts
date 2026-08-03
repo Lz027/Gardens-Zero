@@ -17,6 +17,7 @@ import { Route as AuthenticatedMemoryRouteImport } from './routes/_authenticated
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AuthenticatedChatIndexRouteImport } from './routes/_authenticated/chat.index'
 import { Route as AuthenticatedChatThreadIdRouteImport } from './routes/_authenticated/chat.$threadId'
+import { Route as AuthenticatedPillarsPillarRouteImport } from './routes/_authenticated/pillars.$pillar'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -58,6 +59,12 @@ const AuthenticatedChatThreadIdRoute =
     path: '/chat/$threadId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedPillarsPillarRoute =
+  AuthenticatedPillarsPillarRouteImport.update({
+    id: '/pillars/$pillar',
+    path: '/pillars/$pillar',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -66,6 +73,7 @@ export interface FileRoutesByFullPath {
   '/memory': typeof AuthenticatedMemoryRoute
   '/api/chat': typeof ApiChatRoute
   '/chat/$threadId': typeof AuthenticatedChatThreadIdRoute
+  '/pillars/$pillar': typeof AuthenticatedPillarsPillarRoute
   '/chat/': typeof AuthenticatedChatIndexRoute
 }
 export interface FileRoutesByTo {
@@ -75,6 +83,7 @@ export interface FileRoutesByTo {
   '/memory': typeof AuthenticatedMemoryRoute
   '/api/chat': typeof ApiChatRoute
   '/chat/$threadId': typeof AuthenticatedChatThreadIdRoute
+  '/pillars/$pillar': typeof AuthenticatedPillarsPillarRoute
   '/chat': typeof AuthenticatedChatIndexRoute
 }
 export interface FileRoutesById {
@@ -86,6 +95,7 @@ export interface FileRoutesById {
   '/_authenticated/memory': typeof AuthenticatedMemoryRoute
   '/api/chat': typeof ApiChatRoute
   '/_authenticated/chat/$threadId': typeof AuthenticatedChatThreadIdRoute
+  '/_authenticated/pillars/$pillar': typeof AuthenticatedPillarsPillarRoute
   '/_authenticated/chat/': typeof AuthenticatedChatIndexRoute
 }
 export interface FileRouteTypes {
@@ -97,6 +107,7 @@ export interface FileRouteTypes {
     | '/memory'
     | '/api/chat'
     | '/chat/$threadId'
+    | '/pillars/$pillar'
     | '/chat/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -106,6 +117,7 @@ export interface FileRouteTypes {
     | '/memory'
     | '/api/chat'
     | '/chat/$threadId'
+    | '/pillars/$pillar'
     | '/chat'
   id:
     | '__root__'
@@ -116,6 +128,7 @@ export interface FileRouteTypes {
     | '/_authenticated/memory'
     | '/api/chat'
     | '/_authenticated/chat/$threadId'
+    | '/_authenticated/pillars/$pillar'
     | '/_authenticated/chat/'
   fileRoutesById: FileRoutesById
 }
@@ -184,6 +197,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedChatThreadIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/pillars/$pillar': {
+      id: '/_authenticated/pillars/$pillar'
+      path: '/pillars/$pillar'
+      fullPath: '/pillars/$pillar'
+      preLoaderRoute: typeof AuthenticatedPillarsPillarRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
@@ -191,6 +211,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
   AuthenticatedMemoryRoute: typeof AuthenticatedMemoryRoute
   AuthenticatedChatThreadIdRoute: typeof AuthenticatedChatThreadIdRoute
+  AuthenticatedPillarsPillarRoute: typeof AuthenticatedPillarsPillarRoute
   AuthenticatedChatIndexRoute: typeof AuthenticatedChatIndexRoute
 }
 
@@ -198,6 +219,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedHomeRoute: AuthenticatedHomeRoute,
   AuthenticatedMemoryRoute: AuthenticatedMemoryRoute,
   AuthenticatedChatThreadIdRoute: AuthenticatedChatThreadIdRoute,
+  AuthenticatedPillarsPillarRoute: AuthenticatedPillarsPillarRoute,
   AuthenticatedChatIndexRoute: AuthenticatedChatIndexRoute,
 }
 
