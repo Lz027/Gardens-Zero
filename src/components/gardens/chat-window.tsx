@@ -61,14 +61,14 @@ export function ChatWindow({ threadId }: { threadId: string }) {
 
   const busy = status === "submitted" || status === "streaming";
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  function handleSubmit(
+    message: { text?: string },
+    event: React.FormEvent<HTMLFormElement>,
+  ) {
     event.preventDefault();
-    const form = event.currentTarget;
-    const textarea = form.querySelector("textarea");
-    const text = textarea?.value.trim();
+    const text = message.text?.trim();
     if (!text || busy) return;
     void sendMessage({ text }, { body: { threadId } });
-    if (textarea) textarea.value = "";
   }
 
   return (
