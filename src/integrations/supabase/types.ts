@@ -20,7 +20,9 @@ export type Database = {
           created_at: string
           icon_url: string | null
           id: string
+          is_folder: boolean
           name: string
+          parent_id: string | null
           position: number
           url: string
           user_id: string
@@ -30,9 +32,11 @@ export type Database = {
           created_at?: string
           icon_url?: string | null
           id?: string
+          is_folder?: boolean
           name: string
+          parent_id?: string | null
           position?: number
-          url: string
+          url?: string
           user_id: string
         }
         Update: {
@@ -40,12 +44,22 @@ export type Database = {
           created_at?: string
           icon_url?: string | null
           id?: string
+          is_folder?: boolean
           name?: string
+          parent_id?: string | null
           position?: number
           url?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "apps_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "apps"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       events: {
         Row: {
@@ -173,6 +187,60 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      notes: {
+        Row: {
+          body: string
+          created_at: string
+          height: number
+          id: string
+          is_minimized: boolean
+          is_open: boolean
+          pillar: Database["public"]["Enums"]["pillar"] | null
+          pinned: boolean
+          pos_x: number
+          pos_y: number
+          title: string
+          updated_at: string
+          user_id: string
+          width: number
+          z_index: number
+        }
+        Insert: {
+          body?: string
+          created_at?: string
+          height?: number
+          id?: string
+          is_minimized?: boolean
+          is_open?: boolean
+          pillar?: Database["public"]["Enums"]["pillar"] | null
+          pinned?: boolean
+          pos_x?: number
+          pos_y?: number
+          title?: string
+          updated_at?: string
+          user_id: string
+          width?: number
+          z_index?: number
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          height?: number
+          id?: string
+          is_minimized?: boolean
+          is_open?: boolean
+          pillar?: Database["public"]["Enums"]["pillar"] | null
+          pinned?: boolean
+          pos_x?: number
+          pos_y?: number
+          title?: string
+          updated_at?: string
+          user_id?: string
+          width?: number
+          z_index?: number
+        }
+        Relationships: []
       }
       notifications: {
         Row: {
