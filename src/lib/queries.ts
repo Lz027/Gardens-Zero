@@ -3,8 +3,6 @@ import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
 import type { Pillar } from "@/lib/pillars";
 
-export type Thread = Database["public"]["Tables"]["threads"]["Row"];
-export type MemoryEntry = Database["public"]["Tables"]["memory_entries"]["Row"];
 export type PillarEntry = Database["public"]["Tables"]["pillar_entries"]["Row"];
 export type AppLink = Database["public"]["Tables"]["apps"]["Row"];
 export type Recent = Database["public"]["Tables"]["recents"]["Row"];
@@ -32,58 +30,6 @@ export function useSettings() {
     queryKey: ["settings"],
     queryFn: () => unwrap<Settings[]>(supabase.from("settings").select("*").limit(1)),
     select: (rows) => rows[0] ?? null,
-  });
-}
-
-export function useThreads() {
-  return useQuery({
-    queryKey: ["threads"],
-    queryFn: () =>
-      unwrap<Thread[]>(
-        supabase.from("threads").select("*").order("updated_at", { ascending: false }),
-      ),
-  });
-}
-
-export function useThread(threadId: string) {
-  return useQuery({
-    queryKey: ["thread", threadId],
-    queryFn: () =>
-      unwrap<Thread[]>(supabase.from("threads").select("*").eq("id", threadId).limit(1)),
-    select: (rows) => rows[0] ?? null,
-  });
-}
-
-export function useThreadMessages(threadId: string) {
-  return useQuery({
-    queryKey: ["messages", threadId],
-    queryFn: () =>
-      unwrap<Database["public"]["Tables"]["messages"]["Row"][]>(
-        supabase
-          .from("messages")
-          .select("*")
-          .eq("thread_id", threadId)
-          .order("created_at", { ascending: true }),
-      ),
-  });
-}
-
-export function useMemories(filter?: { pillar?: Pillar | "all"; search?: string }) {
-  return useQuery({
-    queryKey: ["memories", filter?.pillar ?? "all", filter?.search ?? ""],
-    queryFn: async () => {
-      let query = supabase
-        .from("memory_entries")
-        .select("*")
-        .order("pinned", { ascending: false })
-        .order("updated_at", { ascending: false });
-      if (filter?.pillar && filter.pillar !== "all") query = query.eq("pillar", filter.pillar);
-      if (filter?.search?.trim()) {
-        const term = `%${filter.search.trim()}%`;
-        query = query.or(`title.ilike.${term},content.ilike.${term}`);
-      }
-      return unwrap<MemoryEntry[]>(query);
-    },
   });
 }
 
