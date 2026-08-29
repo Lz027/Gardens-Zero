@@ -130,6 +130,28 @@ export function NoteWindow({
         placeholder="Start typing…"
         className="flex-1 resize-none bg-transparent p-3 text-sm leading-relaxed outline-none"
       />
+      <div className="flex items-center gap-2 border-t border-border px-2.5 py-1.5">
+        <span className="text-[10px] uppercase tracking-widest text-muted-foreground">Pillar</span>
+        <select
+          value={note.pillar ?? ""}
+          onPointerDown={(e) => e.stopPropagation()}
+          onChange={(e) =>
+            update.mutate({
+              id: note.id,
+              pillar: e.target.value === "" ? null : (e.target.value as Note["pillar"]),
+            })
+          }
+          className="h-6 rounded border border-input bg-card px-1 text-[11px] text-foreground"
+          aria-label="File note under a pillar"
+        >
+          <option value="">Unfiled</option>
+          {PILLARS.map((p) => (
+            <option key={p} value={p}>
+              {PILLAR_META[p].label}
+            </option>
+          ))}
+        </select>
+      </div>
       <div
         onPointerDown={(e) => start("resize", e)}
         className={cn(
