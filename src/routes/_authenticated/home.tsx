@@ -96,30 +96,6 @@ function Desk() {
         </div>
       </div>
 
-      <div className="grid shrink-0 grid-cols-2 gap-2 border-t border-border p-3 lg:grid-cols-4">
-        {PILLARS.map((pillar) => {
-          const count = (entries ?? []).filter((e) => e.pillar === pillar).length;
-          return (
-            <Link
-              key={pillar}
-              to="/pillars/$pillar"
-              params={{ pillar }}
-              className="panel rounded-lg px-3 py-2 transition-colors hover:border-ring"
-            >
-              <div
-                className={
-                  PILLAR_META[pillar].accent === "iris"
-                    ? "text-[11px] uppercase tracking-widest text-iris"
-                    : "text-[11px] uppercase tracking-widest text-teal"
-                }
-              >
-                {PILLAR_META[pillar].label}
-              </div>
-              <div className="text-xs text-muted-foreground">{count} entries</div>
-            </Link>
-          );
-        })}
-      </div>
     </div>
   );
 }
