@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Minus, X } from "lucide-react";
 import { useDeleteNote, useUpdateNote, type Note } from "@/lib/desk-queries";
+import { PILLARS, PILLAR_META } from "@/lib/pillars";
 import { cn } from "@/lib/utils";
 
 type Geometry = { pos_x: number; pos_y: number; width: number; height: number };
