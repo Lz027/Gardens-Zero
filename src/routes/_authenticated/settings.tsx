@@ -2,131 +2,110 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { useSettings, useProfile, useInvalidate } from "@/lib/queries";
+import { useProfile, useInvalidate, useApps } from "@/lib/queries";
+import { useNotes } from "@/lib/desk-queries";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
-import { AI_MODELS } from "@/lib/pillars";
+import { PILLARS, PILLAR_META } from "@/lib/pillars";
 
 export const Route = createFileRoute("/_authenticated/settings")({
   head: () => ({
     meta: [
       { title: "Settings — Gardens Zero" },
-      { name: "description", content: "Tune Zero's persona, model and memory behaviour." },
+      { name: "description", content: "Your profile, workspace overview and pillar folders." },
       { property: "og:title", content: "Settings — Gardens Zero" },
-      { property: "og:description", content: "Tune Zero's persona, model and memory behaviour." },
+      {
+        property: "og:description",
+        content: "Your profile, workspace overview and pillar folders.",
+      },
     ],
   }),
   component: SettingsPage,
 });
 
 function SettingsPage() {
-  const { data: settings } = useSettings();
   const { data: profile } = useProfile();
+  const { data: notes } = useNotes();
+  const { data: apps } = useApps();
   const invalidate = useInvalidate();
-
-  const [persona, setPersona] = useState("");
-  const [model, setModel] = useState("openai/gpt-5.6-sol");
-  const [memoryEnabled, setMemoryEnabled] = useState(true);
-  const [autoExtract, setAutoExtract] = useState(true);
   const [displayName, setDisplayName] = useState("");
-
-  useEffect(() => {
-    if (!settings) return;
-    setPersona(settings.persona ?? "");
-    setModel(settings.model ?? "openai/gpt-5.6-sol");
-    setMemoryEnabled(settings.memory_enabled);
-    setAutoExtract(settings.auto_extract);
-  }, [settings]);
 
   useEffect(() => {
     if (profile) setDisplayName(profile.display_name ?? "");
   }, [profile]);
 
   async function save() {
+    if (!profile) return;
     const { error } = await supabase
-      .from("settings")
-      .update({
-        persona,
-        model,
-        memory_enabled: memoryEnabled,
-        auto_extract: autoExtract,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("user_id", settings?.user_id ?? "");
-    if (profile) {
-      await supabase
-        .from("profiles")
-        .update({ display_name: displayName })
-        .eq("id", profile.id);
-    }
+      .from("profiles")
+      .update({ display_name: displayName })
+      .eq("id", profile.id);
     if (error) toast.error(error.message);
     else {
-      toast.success("Workspace updated");
-      invalidate(["settings", "profile"]);
+      toast.success("Profile updated");
+      invalidate(["profile"]);
     }
   }
+
+  const appCount = (apps ?? []).filter((a) => !a.is_folder).length;
 
   return (
     <div className="mx-auto max-w-2xl px-6 py-8">
       <h1 className="text-2xl font-semibold tracking-tight">Settings</h1>
+      <p className="mt-1 text-sm text-muted-foreground">
+        Profile, workspace monitoring and your premade pillar folders.
+      </p>
 
-      <div className="mt-6 space-y-5">
+      <div className="mt-6 space-y-6">
         <div className="space-y-1.5">
           <Label htmlFor="name">Display name</Label>
           <Input id="name" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
+          <Button className="mt-2" onClick={() => void save()}>
+            Save
+          </Button>
         </div>
 
-        <div className="space-y-1.5">
-          <Label htmlFor="persona">Zero's persona</Label>
-          <Textarea
-            id="persona"
-            rows={5}
-            value={persona}
-            onChange={(e) => setPersona(e.target.value)}
-            placeholder="How should Zero speak to you, and what should it always keep in mind?"
-          />
-        </div>
-
-        <div className="space-y-1.5">
-          <Label htmlFor="model">Model</Label>
-          <select
-            id="model"
-            value={model}
-            onChange={(e) => setModel(e.target.value)}
-            className="h-9 w-full rounded-md border border-input bg-card px-2 text-sm"
-          >
-            {AI_MODELS.map((option) => (
-              <option key={option.id} value={option.id}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="flex items-center justify-between rounded-lg border border-border p-3">
-          <div>
-            <div className="text-sm font-medium">Use memory core</div>
-            <p className="text-xs text-muted-foreground">
-              Inject known facts and pillar state into every conversation.
-            </p>
+        <section>
+          <h2 className="text-[11px] uppercase tracking-widest text-muted-foreground">
+            Workspace
+          </h2>
+          <div className="mt-2 grid grid-cols-2 gap-2">
+            <div className="panel rounded-lg p-3">
+              <div className="text-lg font-semibold">{notes?.length ?? 0}</div>
+              <div className="text-xs text-muted-foreground">Notes</div>
+            </div>
+            <div className="panel rounded-lg p-3">
+              <div className="text-lg font-semibold">{appCount}</div>
+              <div className="text-xs text-muted-foreground">Apps saved</div>
+            </div>
           </div>
-          <Switch checked={memoryEnabled} onCheckedChange={setMemoryEnabled} />
-        </div>
+        </section>
 
-        <div className="flex items-center justify-between rounded-lg border border-border p-3">
-          <div>
-            <div className="text-sm font-medium">Auto-extract memory</div>
-            <p className="text-xs text-muted-foreground">
-              Let Zero save durable facts and next steps from your chats.
-            </p>
-          </div>
-          <Switch checked={autoExtract} onCheckedChange={setAutoExtract} />
-        </div>
-
-        <Button onClick={save}>Save</Button>
+        <section>
+          <h2 className="text-[11px] uppercase tracking-widest text-muted-foreground">
+            Pillar folders (premade)
+          </h2>
+          <ul className="mt-2 space-y-2">
+            {PILLARS.map((pillar) => {
+              const meta = PILLAR_META[pillar];
+              const Icon = meta.icon;
+              const count = (notes ?? []).filter((n) => n.pillar === pillar).length;
+              return (
+                <li key={pillar} className="panel flex items-center gap-3 rounded-lg p-3">
+                  <Icon
+                    className={meta.accent === "iris" ? "size-4 text-iris" : "size-4 text-teal"}
+                  />
+                  <div className="min-w-0 flex-1">
+                    <div className="text-sm font-medium">{meta.label}</div>
+                    <p className="truncate text-xs text-muted-foreground">{meta.blurb}</p>
+                  </div>
+                  <span className="text-xs text-muted-foreground">{count} notes</span>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
       </div>
     </div>
   );
