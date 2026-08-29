@@ -1,8 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useRef } from "react";
 import { StickyNote, Plus } from "lucide-react";
-import { PILLARS, PILLAR_META } from "@/lib/pillars";
-import { usePillarEntries } from "@/lib/queries";
 import { useCreateNote, useNotes, useUpdateNote } from "@/lib/desk-queries";
 import { NoteWindow } from "@/components/gardens/note-window";
 import { Button } from "@/components/ui/button";
@@ -28,7 +26,6 @@ export const Route = createFileRoute("/_authenticated/home")({
 function Desk() {
   const canvas = useRef<HTMLDivElement | null>(null);
   const { data: notes } = useNotes();
-  const { data: entries } = usePillarEntries();
   const createNote = useCreateNote();
   const updateNote = useUpdateNote();
 
