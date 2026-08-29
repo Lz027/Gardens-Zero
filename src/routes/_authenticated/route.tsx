@@ -1,9 +1,10 @@
-import { createFileRoute, Outlet, redirect, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Outlet, Link, redirect, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Command, LogOut, Menu } from "lucide-react";
+import { CalendarDays, Command, LayoutDashboard, LogOut, Settings as SettingsIcon } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { AppSidebar } from "@/components/gardens/app-sidebar";
+import { AppDock } from "@/components/gardens/app-dock";
+import { PillarTaskbar } from "@/components/gardens/pillar-taskbar";
 import { RightRail } from "@/components/gardens/right-rail";
 import { CommandBar } from "@/components/gardens/command-bar";
 import { GardensWordmark } from "@/components/gardens/logo";
@@ -22,9 +23,14 @@ export const Route = createFileRoute("/_authenticated")({
   component: WorkspaceShell,
 });
 
+const NAV = [
+  { to: "/home", label: "Desk", icon: LayoutDashboard },
+  { to: "/calendar", label: "Calendar", icon: CalendarDays },
+  { to: "/settings", label: "Settings", icon: SettingsIcon },
+] as const;
+
 function WorkspaceShell() {
   const [commandOpen, setCommandOpen] = useState(false);
-  const [mobileNav, setMobileNav] = useState(false);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { data: profile } = useProfile();
@@ -49,22 +55,27 @@ function WorkspaceShell() {
 
   return (
     <div className="fog-surface flex h-screen overflow-hidden">
-      <AppSidebar />
+      <AppDock />
 
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex h-14 shrink-0 items-center gap-3 border-b border-border px-4">
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            className="md:hidden"
-            onClick={() => setMobileNav((v) => !v)}
-            aria-label="Toggle navigation"
-          >
-            <Menu className="size-4" />
-          </Button>
           <div className="md:hidden">
             <GardensWordmark />
           </div>
+
+          <nav className="hidden items-center gap-1 md:flex">
+            {NAV.map((item) => (
+              <Link
+                key={item.to}
+                to={item.to}
+                activeProps={{ className: "bg-accent text-foreground" }}
+                className="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground"
+              >
+                <item.icon className="size-4" />
+                {item.label}
+              </Link>
+            ))}
+          </nav>
 
           <button
             type="button"
@@ -72,7 +83,7 @@ function WorkspaceShell() {
             className="ml-auto flex h-8 min-w-0 items-center gap-2 rounded-lg border border-border bg-card/60 px-3 text-xs text-muted-foreground transition-colors hover:text-foreground sm:w-72"
           >
             <Command className="size-3.5" />
-            <span className="truncate">Search everything</span>
+            <span className="truncate">Search notes and apps</span>
             <kbd className="ml-auto hidden rounded border border-border px-1 font-mono text-[10px] sm:block">
               ⌘K
             </kbd>
@@ -88,29 +99,17 @@ function WorkspaceShell() {
           </div>
         </header>
 
-        {mobileNav && (
-          <div className="border-b border-border md:hidden">
-            <AppSidebarMobile onNavigate={() => setMobileNav(false)} />
-          </div>
-        )}
-
         <div className="flex min-h-0 flex-1">
           <main className="min-w-0 flex-1 overflow-y-auto">
             <Outlet />
           </main>
           <RightRail />
         </div>
+
+        <PillarTaskbar />
       </div>
 
       <CommandBar open={commandOpen} onOpenChange={setCommandOpen} />
-    </div>
-  );
-}
-
-function AppSidebarMobile({ onNavigate }: { onNavigate: () => void }) {
-  return (
-    <div onClick={onNavigate} className="[&_aside]:flex [&_aside]:w-full [&_aside]:border-0">
-      <AppSidebar />
     </div>
   );
 }
