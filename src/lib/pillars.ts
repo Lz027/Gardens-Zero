@@ -1,29 +1,39 @@
+import { Boxes, Briefcase, GraduationCap, Hammer, type LucideIcon } from "lucide-react";
+
 export const PILLARS = ["systems", "career", "projects", "academics"] as const;
 export type Pillar = (typeof PILLARS)[number];
 
 export const PILLAR_META: Record<
   Pillar,
-  { label: string; blurb: string; accent: "iris" | "teal" }
+  { label: string; blurb: string; accent: "iris" | "teal"; icon: LucideIcon; premade: true }
 > = {
   systems: {
     label: "Systems",
-    blurb: "The sync layer. Rules, reset logic, structure, cross-pillar memory.",
+    blurb: "The sync layer. Rules, reset logic, structure, cross-pillar notes.",
     accent: "iris",
+    icon: Boxes,
+    premade: true,
   },
   career: {
     label: "Career",
     blurb: "Earning direction, professional identity, credibility, income path.",
     accent: "teal",
+    icon: Briefcase,
+    premade: true,
   },
   projects: {
     label: "Projects",
     blurb: "Execution, outputs, proof, assets, build work.",
     accent: "iris",
+    icon: Hammer,
+    premade: true,
   },
   academics: {
     label: "Academics",
     blurb: "Study direction, requirements, long-term academic progress.",
     accent: "teal",
+    icon: GraduationCap,
+    premade: true,
   },
 };
 
@@ -45,31 +55,6 @@ export const ENTRY_KIND_LABEL: Record<EntryKind, string> = {
   blocked: "Blocked",
   next: "What comes next",
 };
-
-export const MEMORY_TYPES = [
-  "fact",
-  "decision",
-  "blocker",
-  "next_step",
-  "preference",
-  "note",
-] as const;
-export type MemoryType = (typeof MEMORY_TYPES)[number];
-
-export const MEMORY_TYPE_LABEL: Record<MemoryType, string> = {
-  fact: "Fact",
-  decision: "Decision",
-  blocker: "Blocker",
-  next_step: "Next step",
-  preference: "Preference",
-  note: "Note",
-};
-
-export const AI_MODELS = [
-  { id: "openai/gpt-5.6-sol", label: "Sol — deepest reasoning" },
-  { id: "openai/gpt-5.6-terra", label: "Terra — balanced everyday" },
-  { id: "openai/gpt-5.6-luna", label: "Luna — fast and light" },
-] as const;
 
 export function isPillar(value: unknown): value is Pillar {
   return typeof value === "string" && (PILLARS as readonly string[]).includes(value);
