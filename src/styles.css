@@ -59,12 +59,13 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
   --font-sans:
-    "Inter Tight", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 }
 
 :root {
-  --radius: 0.75rem;
+  --radius: 1.1rem;
+
 
   /* Foggy ghost white */
   --background: oklch(0.975 0.004 265);
