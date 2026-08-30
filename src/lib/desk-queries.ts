@@ -7,6 +7,7 @@ export type NoteInsert = Database["public"]["Tables"]["notes"]["Insert"];
 export type NoteUpdate = Database["public"]["Tables"]["notes"]["Update"];
 export type AppItem = Database["public"]["Tables"]["apps"]["Row"];
 export type AppInsert = Database["public"]["Tables"]["apps"]["Insert"];
+export type NoteFolder = Database["public"]["Tables"]["note_folders"]["Row"];
 
 async function unwrap<T>(promise: PromiseLike<{ data: T | null; error: unknown }>) {
   const { data, error } = await promise;
@@ -21,12 +22,32 @@ async function userId() {
   return id;
 }
 
+/** Live notes (everything not in the trash bin). */
 export function useNotes() {
   return useQuery({
     queryKey: ["notes"],
     queryFn: () =>
       unwrap<Note[]>(
-        supabase.from("notes").select("*").order("updated_at", { ascending: false }),
+        supabase
+          .from("notes")
+          .select("*")
+          .is("deleted_at", null)
+          .order("updated_at", { ascending: false }),
+      ),
+  });
+}
+
+/** Notes sitting in the trash bin. */
+export function useTrashedNotes() {
+  return useQuery({
+    queryKey: ["notes", "trash"],
+    queryFn: () =>
+      unwrap<Note[]>(
+        supabase
+          .from("notes")
+          .select("*")
+          .not("deleted_at", "is", null)
+          .order("deleted_at", { ascending: false }),
       ),
   });
 }
@@ -56,7 +77,33 @@ export function useUpdateNote() {
   });
 }
 
+/** Soft delete — the note moves to the trash bin. */
 export function useDeleteNote() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from("notes")
+        .update({ deleted_at: new Date().toISOString() })
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => void qc.invalidateQueries({ queryKey: ["notes"] }),
+  });
+}
+
+export function useRestoreNote() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("notes").update({ deleted_at: null }).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => void qc.invalidateQueries({ queryKey: ["notes"] }),
+  });
+}
+
+export function usePurgeNote() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
@@ -66,6 +113,59 @@ export function useDeleteNote() {
     onSuccess: () => void qc.invalidateQueries({ queryKey: ["notes"] }),
   });
 }
+
+/* ---------------------------------- folders --------------------------------- */
+
+export function useNoteFolders() {
+  return useQuery({
+    queryKey: ["note_folders"],
+    queryFn: () =>
+      unwrap<NoteFolder[]>(
+        supabase.from("note_folders").select("*").order("created_at", { ascending: true }),
+      ),
+  });
+}
+
+export function useCreateNoteFolder() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: { name?: string; pos_x?: number; pos_y?: number } = {}) => {
+      const user_id = await userId();
+      return unwrap<NoteFolder[]>(
+        supabase
+          .from("note_folders")
+          .insert({ user_id, ...input })
+          .select(),
+      );
+    },
+    onSuccess: () => void qc.invalidateQueries({ queryKey: ["note_folders"] }),
+  });
+}
+
+export function useUpdateNoteFolder() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, ...patch }: Partial<NoteFolder> & { id: string }) =>
+      unwrap(supabase.from("note_folders").update(patch).eq("id", id).select()),
+    onSuccess: () => void qc.invalidateQueries({ queryKey: ["note_folders"] }),
+  });
+}
+
+export function useDeleteNoteFolder() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("note_folders").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: ["note_folders"] });
+      void qc.invalidateQueries({ queryKey: ["notes"] });
+    },
+  });
+}
+
+/* ----------------------------------- apps ----------------------------------- */
 
 export function useCreateApp() {
   const qc = useQueryClient();
@@ -88,6 +188,22 @@ export function useUpdateApp() {
   return useMutation({
     mutationFn: async ({ id, ...patch }: Partial<AppItem> & { id: string }) =>
       unwrap(supabase.from("apps").update(patch).eq("id", id).select()),
+    onSuccess: () => void qc.invalidateQueries({ queryKey: ["apps"] }),
+  });
+}
+
+/** Counts a share and returns the link to copy. */
+export function useShareApp() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (app: AppItem) => {
+      const { error } = await supabase
+        .from("apps")
+        .update({ share_count: (app.share_count ?? 0) + 1 })
+        .eq("id", app.id);
+      if (error) throw error;
+      return app.url;
+    },
     onSuccess: () => void qc.invalidateQueries({ queryKey: ["apps"] }),
   });
 }

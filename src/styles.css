@@ -59,12 +59,13 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
   --font-sans:
-    "Inter Tight", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 }
 
 :root {
-  --radius: 0.75rem;
+  --radius: 1.1rem;
+
 
   /* Foggy ghost white */
   --background: oklch(0.975 0.004 265);
@@ -207,4 +208,31 @@
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+}
+
+/* Soft edge glow used by app tiles and desktop icons. */
+@utility glow-edge {
+  transition:
+    box-shadow 220ms ease,
+    transform 220ms ease;
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow:
+      0 0 0 1px color-mix(in oklab, var(--teal) 45%, transparent),
+      0 0 18px color-mix(in oklab, var(--teal) 28%, transparent),
+      0 0 34px color-mix(in oklab, var(--iris) 18%, transparent);
+  }
+  &:focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 2px color-mix(in oklab, var(--iris) 55%, transparent),
+      0 0 22px color-mix(in oklab, var(--iris) 25%, transparent);
+  }
+}
+
+@utility soft-card {
+  background: color-mix(in oklab, var(--card) 88%, transparent);
+  border: 1px solid color-mix(in oklab, var(--border) 70%, transparent);
+  border-radius: var(--radius);
+  box-shadow: 0 1px 2px oklch(0 0 0 / 6%), 0 8px 24px -18px oklch(0 0 0 / 45%);
 }

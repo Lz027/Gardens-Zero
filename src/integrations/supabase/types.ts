@@ -20,10 +20,12 @@ export type Database = {
           created_at: string
           icon_url: string | null
           id: string
+          is_favorite: boolean
           is_folder: boolean
           name: string
           parent_id: string | null
           position: number
+          share_count: number
           url: string
           user_id: string
         }
@@ -32,10 +34,12 @@ export type Database = {
           created_at?: string
           icon_url?: string | null
           id?: string
+          is_favorite?: boolean
           is_folder?: boolean
           name: string
           parent_id?: string | null
           position?: number
+          share_count?: number
           url?: string
           user_id: string
         }
@@ -44,10 +48,12 @@ export type Database = {
           created_at?: string
           icon_url?: string | null
           id?: string
+          is_favorite?: boolean
           is_folder?: boolean
           name?: string
           parent_id?: string | null
           position?: number
+          share_count?: number
           url?: string
           user_id?: string
         }
@@ -188,12 +194,42 @@ export type Database = {
           },
         ]
       }
+      note_folders: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          pos_x: number
+          pos_y: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name?: string
+          pos_x?: number
+          pos_y?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          pos_x?: number
+          pos_y?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       notes: {
         Row: {
           body: string
           created_at: string
+          deleted_at: string | null
+          folder_id: string | null
           height: number
           id: string
+          is_maximized: boolean
           is_minimized: boolean
           is_open: boolean
           pillar: Database["public"]["Enums"]["pillar"] | null
@@ -209,8 +245,11 @@ export type Database = {
         Insert: {
           body?: string
           created_at?: string
+          deleted_at?: string | null
+          folder_id?: string | null
           height?: number
           id?: string
+          is_maximized?: boolean
           is_minimized?: boolean
           is_open?: boolean
           pillar?: Database["public"]["Enums"]["pillar"] | null
@@ -226,8 +265,11 @@ export type Database = {
         Update: {
           body?: string
           created_at?: string
+          deleted_at?: string | null
+          folder_id?: string | null
           height?: number
           id?: string
+          is_maximized?: boolean
           is_minimized?: boolean
           is_open?: boolean
           pillar?: Database["public"]["Enums"]["pillar"] | null
@@ -240,7 +282,15 @@ export type Database = {
           width?: number
           z_index?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "notes_folder_id_fkey"
+            columns: ["folder_id"]
+            isOneToOne: false
+            referencedRelation: "note_folders"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       notifications: {
         Row: {
@@ -332,26 +382,35 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          bio: string | null
           created_at: string
           display_name: string | null
           email: string | null
+          headline: string | null
           id: string
+          links: Json
           updated_at: string
         }
         Insert: {
           avatar_url?: string | null
+          bio?: string | null
           created_at?: string
           display_name?: string | null
           email?: string | null
+          headline?: string | null
           id: string
+          links?: Json
           updated_at?: string
         }
         Update: {
           avatar_url?: string | null
+          bio?: string | null
           created_at?: string
           display_name?: string | null
           email?: string | null
+          headline?: string | null
           id?: string
+          links?: Json
           updated_at?: string
         }
         Relationships: []

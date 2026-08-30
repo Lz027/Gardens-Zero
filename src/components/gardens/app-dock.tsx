@@ -1,11 +1,16 @@
 import { useMemo, useRef, useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
+import { toast } from "sonner";
 import {
+  Check,
   ChevronsLeftRight,
   ChevronsRightLeft,
   Folder,
   Globe,
+  Link2,
+  Pencil,
   Plus,
+  Star,
   Trash2,
   Settings as SettingsIcon,
 } from "lucide-react";
@@ -23,7 +28,13 @@ import {
 } from "@/components/ui/dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useApps } from "@/lib/queries";
-import { useCreateApp, useDeleteApp, useUpdateApp, type AppItem } from "@/lib/desk-queries";
+import {
+  useCreateApp,
+  useDeleteApp,
+  useShareApp,
+  useUpdateApp,
+  type AppItem,
+} from "@/lib/desk-queries";
 import { resizeToAppIcon } from "@/lib/icon-image";
 import { cn } from "@/lib/utils";
 
@@ -33,18 +44,29 @@ export function AppDock() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { data: apps } = useApps();
   const [expanded, setExpanded] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [selected, setSelected] = useState<string[]>([]);
   const [dragId, setDragId] = useState<string | null>(null);
   const [dropId, setDropId] = useState<string | null>(null);
 
   const createApp = useCreateApp();
   const updateApp = useUpdateApp();
+  const deleteApp = useDeleteApp();
 
   const all = (apps ?? []) as AppItem[];
-  const roots = useMemo(
-    () => all.filter((a) => !a.parent_id).slice(0, MAX_APPS),
-    [all],
-  );
+  const roots = useMemo(() => all.filter((a) => !a.parent_id).slice(0, MAX_APPS), [all]);
   const childrenOf = (id: string) => all.filter((a) => a.parent_id === id);
+
+  function toggleSelected(id: string) {
+    setSelected((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]));
+  }
+
+  async function deleteSelected() {
+    for (const id of selected) await deleteApp.mutateAsync(id);
+    toast.success(`${selected.length} removed`);
+    setSelected([]);
+    setEditing(false);
+  }
 
   async function handleDrop(target: AppItem) {
     const source = all.find((a) => a.id === dragId);
@@ -71,20 +93,41 @@ export function AppDock() {
   return (
     <aside
       className={cn(
-        "hidden shrink-0 flex-col border-r border-sidebar-border bg-sidebar transition-[width] duration-200 md:flex",
+        "hidden shrink-0 flex-col border-r border-sidebar-border/70 bg-sidebar transition-[width] duration-300 md:flex",
         expanded ? "w-[26rem]" : "w-[8.5rem]",
       )}
     >
-      <div className="flex items-center justify-between px-3 py-4">
+      <div className="flex items-center justify-between px-4 py-4">
         <Link to="/home">
           <GardensWordmark compact={!expanded} />
         </Link>
       </div>
 
-      <div className="flex items-center justify-between px-3 pb-2">
-        <span className="text-[11px] uppercase tracking-widest text-muted-foreground">
+      <div className="flex items-center gap-1 px-3 pb-2">
+        <span className="mr-auto text-[11px] tracking-wide text-muted-foreground">
           Apps {roots.length}/{MAX_APPS}
         </span>
+        <Button
+          variant={editing ? "secondary" : "ghost"}
+          size="icon-sm"
+          onClick={() => {
+            setEditing((v) => !v);
+            setSelected([]);
+          }}
+          aria-label={editing ? "Done editing apps" : "Edit apps"}
+        >
+          {editing ? <Check className="size-4" /> : <Pencil className="size-4" />}
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          onClick={() => void deleteSelected()}
+          disabled={selected.length === 0}
+          aria-label="Delete selected apps"
+          className="text-muted-foreground hover:text-destructive"
+        >
+          <Trash2 className="size-4" />
+        </Button>
         <Button
           variant="ghost"
           size="icon-sm"
@@ -105,7 +148,10 @@ export function AppDock() {
             <DockTile
               key={app.id}
               app={app}
-              children={childrenOf(app.id)}
+              folderChildren={childrenOf(app.id)}
+              editing={editing}
+              selected={selected.includes(app.id)}
+              onSelect={() => toggleSelected(app.id)}
               isDropTarget={dropId === app.id && dragId !== app.id}
               onDragStart={() => setDragId(app.id)}
               onDragEnd={() => {
@@ -119,15 +165,15 @@ export function AppDock() {
           {roots.length < MAX_APPS && <AddAppTile />}
         </div>
         <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground">
-          Drag one app onto another to merge them into a folder.
+          Click opens the app. Drag one onto another to make a folder. Right-click to share.
         </p>
       </div>
 
-      <div className="border-t border-sidebar-border p-3">
+      <div className="border-t border-sidebar-border/70 p-3">
         <Link
           to="/settings"
           className={cn(
-            "flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm text-sidebar-foreground transition-colors hover:bg-sidebar-accent",
+            "flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-sm text-sidebar-foreground transition-colors hover:bg-sidebar-accent",
             pathname === "/settings" && "bg-sidebar-accent font-medium",
           )}
         >
@@ -144,7 +190,7 @@ function DockIcon({ app, className }: { app: AppItem; className?: string }) {
     return (
       <div
         className={cn(
-          "flex size-11 items-center justify-center rounded-xl border border-border bg-card",
+          "flex size-11 items-center justify-center rounded-2xl border border-border/70 bg-card",
           className,
         )}
       >
@@ -159,12 +205,12 @@ function DockIcon({ app, className }: { app: AppItem; className?: string }) {
       loading="lazy"
       width={256}
       height={256}
-      className={cn("size-11 rounded-xl object-cover", className)}
+      className={cn("size-11 rounded-2xl object-cover", className)}
     />
   ) : (
     <div
       className={cn(
-        "flex size-11 items-center justify-center rounded-xl border border-border bg-card",
+        "flex size-11 items-center justify-center rounded-2xl border border-border/70 bg-card",
         className,
       )}
     >
@@ -175,7 +221,10 @@ function DockIcon({ app, className }: { app: AppItem; className?: string }) {
 
 function DockTile({
   app,
-  children,
+  folderChildren,
+  editing,
+  selected,
+  onSelect,
   isDropTarget,
   onDragStart,
   onDragEnd,
@@ -183,45 +232,104 @@ function DockTile({
   onDrop,
 }: {
   app: AppItem;
-  children: AppItem[];
+  folderChildren: AppItem[];
+  editing: boolean;
+  selected: boolean;
+  onSelect: () => void;
   isDropTarget: boolean;
   onDragStart: () => void;
   onDragEnd: () => void;
   onDragOver: () => void;
   onDrop: () => void;
 }) {
-  const deleteApp = useDeleteApp();
   const updateApp = useUpdateApp();
+  const share = useShareApp();
+  const [showShare, setShowShare] = useState(false);
 
-  const tile = (
+  async function copyLink() {
+    const url = await share.mutateAsync(app);
+    try {
+      await navigator.clipboard.writeText(url);
+      toast.success("Link copied");
+    } catch {
+      toast.error("Could not copy the link");
+    }
+    setShowShare(false);
+  }
+
+  const body = (
     <div
-      draggable={!app.is_folder}
-      onDragStart={onDragStart}
-      onDragEnd={onDragEnd}
-      onDragOver={(e) => {
-        e.preventDefault();
-        onDragOver();
-      }}
-      onDrop={(e) => {
-        e.preventDefault();
-        onDrop();
-      }}
       className={cn(
-        "group flex cursor-pointer flex-col items-center gap-1 rounded-xl p-1.5 transition-colors hover:bg-sidebar-accent",
-        isDropTarget && "bg-sidebar-accent ring-2 ring-iris",
+        "group relative flex flex-col items-center gap-1.5 rounded-2xl p-1.5",
+        "glow-edge",
+        isDropTarget && "bg-sidebar-accent",
+        selected && "bg-sidebar-accent ring-2 ring-iris",
       )}
     >
       <DockIcon app={app} />
       <span className="w-full truncate text-center text-[10px] text-sidebar-foreground">
         {app.name}
       </span>
+
+      {showShare && !app.is_folder && (
+        <button
+          type="button"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            void copyLink();
+          }}
+          aria-label="Copy share link"
+          className="absolute -right-1 -top-1 rounded-full bg-iris p-1 text-iris-foreground shadow-md"
+        >
+          <Link2 className="size-3" />
+        </button>
+      )}
+      {editing && (
+        <span
+          className={cn(
+            "absolute -left-1 -top-1 size-4 rounded-full border border-border bg-card",
+            selected && "border-iris bg-iris",
+          )}
+        />
+      )}
     </div>
   );
+
+  const shared = {
+    draggable: !app.is_folder && !editing,
+    onDragStart,
+    onDragEnd,
+    onDragOver: (e: React.DragEvent) => {
+      e.preventDefault();
+      onDragOver();
+    },
+    onDrop: (e: React.DragEvent) => {
+      e.preventDefault();
+      onDrop();
+    },
+    onContextMenu: (e: React.MouseEvent) => {
+      e.preventDefault();
+      setShowShare((v) => !v);
+    },
+  };
+
+  if (editing) {
+    return (
+      <button type="button" className="text-left" onClick={onSelect} {...shared}>
+        {body}
+      </button>
+    );
+  }
 
   if (app.is_folder) {
     return (
       <Popover>
-        <PopoverTrigger asChild>{tile}</PopoverTrigger>
+        <PopoverTrigger asChild>
+          <button type="button" className="text-left" {...shared}>
+            {body}
+          </button>
+        </PopoverTrigger>
         <PopoverContent align="start" className="w-64 space-y-2">
           <input
             value={app.name}
@@ -230,55 +338,46 @@ function DockTile({
             aria-label="Folder name"
           />
           <div className="grid grid-cols-4 gap-2">
-            {children.map((child) => (
+            {folderChildren.map((child) => (
               <a
                 key={child.id}
                 href={child.url}
                 target="_blank"
                 rel="noreferrer"
-                className="flex flex-col items-center gap-1 rounded-lg p-1 hover:bg-accent"
+                className="glow-edge flex flex-col items-center gap-1 rounded-xl p-1"
               >
                 <DockIcon app={child} className="size-9" />
                 <span className="w-full truncate text-center text-[10px]">{child.name}</span>
               </a>
             ))}
           </div>
-          <div className="flex justify-between pt-1">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => void updateApp.mutate({ id: children[0]?.id ?? "", parent_id: null })}
-              disabled={children.length === 0}
-            >
-              Pull one out
-            </Button>
-            <Button variant="ghost" size="sm" onClick={() => void deleteApp.mutate(app.id)}>
-              <Trash2 className="size-3.5" /> Delete
-            </Button>
-          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => void updateApp.mutate({ id: folderChildren[0]?.id ?? "", parent_id: null })}
+            disabled={folderChildren.length === 0}
+          >
+            Pull one out
+          </Button>
         </PopoverContent>
       </Popover>
     );
   }
 
   return (
-    <Popover>
-      <PopoverTrigger asChild>{tile}</PopoverTrigger>
-      <PopoverContent align="start" className="w-56 space-y-2">
-        <div className="text-sm font-medium">{app.name}</div>
-        <a
-          href={app.url}
-          target="_blank"
-          rel="noreferrer"
-          className="block truncate text-xs text-teal underline"
-        >
-          {app.url}
-        </a>
-        <Button variant="ghost" size="sm" onClick={() => void deleteApp.mutate(app.id)}>
-          <Trash2 className="size-3.5" /> Remove
-        </Button>
-      </PopoverContent>
-    </Popover>
+    <a
+      href={app.url}
+      target="_blank"
+      rel="noreferrer"
+      title={app.name}
+      onDoubleClick={() => void updateApp.mutate({ id: app.id, is_favorite: !app.is_favorite })}
+      {...shared}
+    >
+      {body}
+      {app.is_favorite && (
+        <Star className="pointer-events-none -mt-6 ml-auto mr-1 size-3 fill-iris text-iris" />
+      )}
+    </a>
   );
 }
 
@@ -319,9 +418,9 @@ function AddAppTile() {
       <DialogTrigger asChild>
         <button
           type="button"
-          className="flex flex-col items-center gap-1 rounded-xl p-1.5 text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-foreground"
+          className="glow-edge flex flex-col items-center gap-1.5 rounded-2xl p-1.5 text-muted-foreground hover:text-foreground"
         >
-          <span className="flex size-11 items-center justify-center rounded-xl border border-dashed border-border">
+          <span className="flex size-11 items-center justify-center rounded-2xl border border-dashed border-border">
             <Plus className="size-5" />
           </span>
           <span className="text-[10px]">Add</span>
@@ -350,9 +449,15 @@ function AddAppTile() {
           </div>
           <div className="flex items-center gap-3">
             {icon ? (
-              <img src={icon} alt="" width={256} height={256} className="size-14 rounded-xl object-cover" />
+              <img
+                src={icon}
+                alt=""
+                width={256}
+                height={256}
+                className="size-14 rounded-2xl object-cover"
+              />
             ) : (
-              <div className="flex size-14 items-center justify-center rounded-xl border border-dashed border-border">
+              <div className="flex size-14 items-center justify-center rounded-2xl border border-dashed border-border">
                 <Globe className="size-5 text-muted-foreground" />
               </div>
             )}
