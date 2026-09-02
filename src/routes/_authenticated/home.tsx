@@ -54,13 +54,20 @@ function Desk() {
       </div>
 
       <div ref={canvas} className="relative min-h-0 flex-1 overflow-hidden">
+        <DesktopItems bounds={canvas} />
+
         {open.length === 0 && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-center">
+          <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-3 text-center">
             <StickyNote className="size-8 text-muted-foreground" />
             <p className="text-sm text-muted-foreground">
               An empty desk. Open a note and start writing.
             </p>
-            <Button variant="outline" size="sm" onClick={newNote}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={newNote}
+              className="pointer-events-auto"
+            >
               New note
             </Button>
           </div>
@@ -84,9 +91,11 @@ function Desk() {
                 key={note.id}
                 type="button"
                 onClick={() => updateNote.mutate({ id: note.id, is_minimized: false })}
-                className="panel rounded-lg px-2.5 py-1 text-xs"
+                title={note.title}
+                className="flex w-32 items-center gap-2 rounded-md border border-iris/40 bg-iris/10 px-2 py-1.5 text-left text-xs text-muted-foreground transition-colors hover:border-iris/70 hover:bg-iris/20 hover:text-foreground"
               >
-                {note.title}
+                <NotepadGlyph className="size-4 opacity-70" />
+                <span className="min-w-0 flex-1 truncate">{note.title}</span>
               </button>
             ))}
           </div>
