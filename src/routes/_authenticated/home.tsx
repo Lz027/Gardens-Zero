@@ -3,6 +3,7 @@ import { useRef } from "react";
 import { StickyNote, Plus } from "lucide-react";
 import { useCreateNote, useNotes, useUpdateNote } from "@/lib/desk-queries";
 import { NoteWindow } from "@/components/gardens/note-window";
+import { DesktopItems, NotepadGlyph } from "@/components/gardens/desktop-items";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_authenticated/home")({
