@@ -9,6 +9,8 @@ import {
   Globe,
   Link2,
   Pencil,
+  PanelLeftClose,
+  PanelLeftOpen,
   Plus,
   Star,
   Trash2,
@@ -40,10 +42,13 @@ import { cn } from "@/lib/utils";
 
 const MAX_APPS = 16;
 
+type DockMode = "hidden" | "normal" | "wide";
+
 export function AppDock() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { data: apps } = useApps();
-  const [expanded, setExpanded] = useState(false);
+  const [mode, setMode] = useState<DockMode>("normal");
+  const expanded = mode === "wide";
   const [editing, setEditing] = useState(false);
   const [selected, setSelected] = useState<string[]>([]);
   const [dragId, setDragId] = useState<string | null>(null);
@@ -90,6 +95,19 @@ export function AppDock() {
     await updateApp.mutateAsync({ id: source.id, parent_id: folder.id });
   }
 
+  if (mode === "hidden") {
+    return (
+      <button
+        type="button"
+        onClick={() => setMode("normal")}
+        aria-label="Show app dock"
+        className="fixed left-0 top-1/2 z-40 hidden -translate-y-1/2 rounded-r-xl border border-l-0 border-sidebar-border/70 bg-sidebar/90 px-1.5 py-4 text-muted-foreground backdrop-blur transition-colors hover:text-foreground md:block"
+      >
+        <PanelLeftOpen className="size-4" />
+      </button>
+    );
+  }
+
   return (
     <aside
       className={cn(
@@ -131,7 +149,7 @@ export function AppDock() {
         <Button
           variant="ghost"
           size="icon-sm"
-          onClick={() => setExpanded((v) => !v)}
+          onClick={() => setMode(expanded ? "normal" : "wide")}
           aria-label={expanded ? "Collapse dock" : "Expand dock"}
         >
           {expanded ? (
@@ -140,10 +158,18 @@ export function AppDock() {
             <ChevronsLeftRight className="size-4" />
           )}
         </Button>
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          onClick={() => setMode("hidden")}
+          aria-label="Hide dock"
+        >
+          <PanelLeftClose className="size-4" />
+        </Button>
       </div>
 
       <div className="flex-1 overflow-y-auto px-3 pb-4">
-        <div className={cn("grid gap-2", expanded ? "grid-cols-8" : "grid-cols-2")}>
+        <div className={cn("grid gap-2", expanded ? "grid-cols-6" : "grid-cols-2")}>
           {roots.map((app) => (
             <DockTile
               key={app.id}
