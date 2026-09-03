@@ -19,11 +19,11 @@ export const Route = createFileRoute("/_authenticated/pillars/$pillar")({
   head: () => ({
     meta: [
       { title: "Pillar folder — Gardens Zero" },
-      { name: "description", content: "Notes and progress filed under one premade pillar." },
+      { name: "description", content: "Notes and progress filed under one Gardens Zero pillar folder." },
       { property: "og:title", content: "Pillar folder — Gardens Zero" },
       {
         property: "og:description",
-        content: "Notes and progress filed under one premade pillar.",
+        content: "Notes and progress filed under one Gardens Zero pillar folder.",
       },
     ],
   }),
