@@ -233,6 +233,7 @@ export type Database = {
           is_minimized: boolean
           is_open: boolean
           pillar: Database["public"]["Enums"]["pillar"] | null
+          pillar_id: string | null
           pinned: boolean
           pos_x: number
           pos_y: number
@@ -253,6 +254,7 @@ export type Database = {
           is_minimized?: boolean
           is_open?: boolean
           pillar?: Database["public"]["Enums"]["pillar"] | null
+          pillar_id?: string | null
           pinned?: boolean
           pos_x?: number
           pos_y?: number
@@ -273,6 +275,7 @@ export type Database = {
           is_minimized?: boolean
           is_open?: boolean
           pillar?: Database["public"]["Enums"]["pillar"] | null
+          pillar_id?: string | null
           pinned?: boolean
           pos_x?: number
           pos_y?: number
@@ -288,6 +291,13 @@ export type Database = {
             columns: ["folder_id"]
             isOneToOne: false
             referencedRelation: "note_folders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notes_pillar_id_fkey"
+            columns: ["pillar_id"]
+            isOneToOne: false
+            referencedRelation: "pillars"
             referencedColumns: ["id"]
           },
         ]
@@ -379,6 +389,42 @@ export type Database = {
         }
         Relationships: []
       }
+      pillars: {
+        Row: {
+          accent: string
+          blurb: string | null
+          created_at: string
+          icon: string
+          id: string
+          label: string
+          slug: string
+          sort_order: number
+          user_id: string
+        }
+        Insert: {
+          accent?: string
+          blurb?: string | null
+          created_at?: string
+          icon?: string
+          id?: string
+          label: string
+          slug: string
+          sort_order?: number
+          user_id: string
+        }
+        Update: {
+          accent?: string
+          blurb?: string | null
+          created_at?: string
+          icon?: string
+          id?: string
+          label?: string
+          slug?: string
+          sort_order?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -389,7 +435,9 @@ export type Database = {
           headline: string | null
           id: string
           links: Json
+          theme: string
           updated_at: string
+          wallpaper: string | null
         }
         Insert: {
           avatar_url?: string | null
@@ -400,7 +448,9 @@ export type Database = {
           headline?: string | null
           id: string
           links?: Json
+          theme?: string
           updated_at?: string
+          wallpaper?: string | null
         }
         Update: {
           avatar_url?: string | null
@@ -411,7 +461,9 @@ export type Database = {
           headline?: string | null
           id?: string
           links?: Json
+          theme?: string
           updated_at?: string
+          wallpaper?: string | null
         }
         Relationships: []
       }
