@@ -16,13 +16,14 @@ export const Route = createFileRoute("/auth")({
       { title: "Sign in — Gardens Zero" },
       {
         name: "description",
-        content: "Sign in to your Gardens Zero workspace to reach your pillars and memory core.",
+        content: "Sign in to reach your notes desk, app dock and pillar folders in Gardens Zero.",
       },
       { property: "og:title", content: "Sign in — Gardens Zero" },
       {
         property: "og:description",
-        content: "Sign in to your Gardens Zero workspace to reach your pillars and memory core.",
+        content: "Sign in to reach your notes desk, app dock and pillar folders in Gardens Zero.",
       },
+      { name: "robots", content: "noindex" },
     ],
   }),
   validateSearch: (search: Record<string, unknown>): AuthSearch => ({
