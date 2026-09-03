@@ -8,19 +8,20 @@ import { PILLARS, PILLAR_META } from "@/lib/pillars";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Gardens Zero — a personal operating system" },
+      { title: "Gardens Zero — Notes Desk & App Dock" },
       {
         name: "description",
         content:
-          "Gardens Zero holds Systems, Career, Projects and Academics in one workspace, with an AI that remembers what changed and what comes next.",
+          "A desktop-style notes workspace: floating note windows, desktop folders and a recycle bin, plus a sliding dock of your favourite links as apps.",
       },
-      { property: "og:title", content: "Gardens Zero — a personal operating system" },
+      { property: "og:title", content: "Gardens Zero — Notes Desk & App Dock" },
       {
         property: "og:description",
         content:
-          "One workspace for Systems, Career, Projects and Academics, with a memory core that grows from your own conversations.",
+          "Write notes in movable windows, file them into pillar folders, and keep your links one click away in the app dock.",
       },
     ],
+    links: [{ rel: "canonical", href: "https://garden-of-zero.lovable.app/" }],
   }),
   component: Landing,
 });
