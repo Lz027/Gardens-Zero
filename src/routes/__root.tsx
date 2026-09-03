@@ -77,13 +77,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Gardens Zero — Personal Workspace OS" },
+      { title: "Gardens Zero — Notes Desk & App Dock" },
       {
         name: "description",
         content:
-          "Gardens Zero is a personal operating system for Systems, Career, Projects and Academics, with an AI memory core that tracks what changed.",
+          "Gardens Zero is a desktop-style notes workspace: floating note windows, a drag-and-drop app dock for your links, and pillar folders that keep progress in view.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:site_name", content: "Gardens Zero" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
@@ -92,7 +93,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap",
       },
       { rel: "icon", type: "image/png", href: "/favicon.png" },
     ],
