@@ -54,7 +54,7 @@ function SettingsPage() {
     <div className="mx-auto max-w-2xl px-6 py-8">
       <h1 className="text-2xl font-semibold tracking-tight">Settings</h1>
       <p className="mt-1 text-sm text-muted-foreground">
-        Profile, workspace monitoring and your premade pillar folders.
+        Profile, workspace monitoring and your pillar folders.
       </p>
 
       <div className="mt-6 space-y-6">
@@ -84,7 +84,7 @@ function SettingsPage() {
 
         <section>
           <h2 className="text-[11px] uppercase tracking-widest text-muted-foreground">
-            Pillar folders (premade)
+            Pillar folders
           </h2>
           <ul className="mt-2 space-y-2">
             {PILLARS.map((pillar) => {
