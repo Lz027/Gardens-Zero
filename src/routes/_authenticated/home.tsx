@@ -1,10 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { StickyNote, Plus, MessageSquare, LayoutDashboard } from "lucide-react";
-import { useCreateNote, useNotes, useUpdateNote } from "@/lib/desk-queries";
+import { StickyNote, Plus, MessageSquare, LayoutDashboard, FolderPlus } from "lucide-react";
+import { useCreateNote, useCreateNoteFolder, useNotes, useUpdateNote } from "@/lib/desk-queries";
 import { NoteWindow } from "@/components/gardens/note-window";
 import { DesktopItems, NotepadGlyph } from "@/components/gardens/desktop-items";
 import { ChatMode } from "@/components/gardens/chat-mode";
+import { WallpaperPicker } from "@/components/gardens/wallpaper-picker";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useWallpaper } from "@/lib/wallpaper";
@@ -173,7 +174,7 @@ function Desk() {
             <p className="text-sm text-muted-foreground">
               An empty desk. Open a note and start writing.
             </p>
-            <Button variant="outline" size="sm" onClick={newNote} className="pointer-events-auto">
+            <Button variant="outline" size="sm" onClick={() => newNote()} className="pointer-events-auto">
               New note
             </Button>
           </div>
