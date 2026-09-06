@@ -73,9 +73,13 @@ export function WallpaperPicker() {
             />
             <Button
               onClick={() => {
-                if (!/^https?:\/\//.test(url)) return toast.error("Paste a link starting with https");
+                if (!/^https?:\/\//.test(url)) {
+                  toast.error("Paste a link starting with https");
+                  return;
+                }
                 void apply(`url:${url}`);
               }}
+
             >
               Use
             </Button>
