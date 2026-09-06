@@ -5,25 +5,11 @@
 //     React/TanStack dedupe, error logger plugins, and sandbox detection (port/host/strictPort).
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
-import { fileURLToPath } from "node:url";
-
-// Point every `@/integrations/supabase/client` import at the Gardens Zero
-// external Supabase project instead of the generated Lovable Cloud client.
-const gardensClient = fileURLToPath(
-  new URL("./src/integrations/supabase/gardens-client.ts", import.meta.url),
-);
 
 export default defineConfig({
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this
     server: { entry: "server" },
-  },
-  vite: {
-    resolve: {
-      alias: [
-        { find: /^@\/integrations\/supabase\/client$/, replacement: gardensClient },
-      ],
-    },
   },
 });
