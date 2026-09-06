@@ -1,9 +1,10 @@
 import { createFileRoute, notFound, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { StickyNote } from "lucide-react";
+import { MessageSquare, StickyNote } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { usePillarEntries, useInvalidate, currentUserId } from "@/lib/queries";
 import { useCreateNote, useNotes, useUpdateNote } from "@/lib/desk-queries";
+import { useCreateThread, useThreads, useUpdateThread } from "@/lib/chat-queries";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -42,6 +43,9 @@ function PillarBody({ pillar }: { pillar: Pillar }) {
   const navigate = useNavigate();
   const { data: entries } = usePillarEntries(pillar);
   const { data: notes } = useNotes();
+  const { data: threads } = useThreads();
+  const createThread = useCreateThread();
+  const updateThread = useUpdateThread();
   const createNote = useCreateNote();
   const updateNote = useUpdateNote();
   const invalidate = useInvalidate();
@@ -49,6 +53,7 @@ function PillarBody({ pillar }: { pillar: Pillar }) {
   const [content, setContent] = useState("");
 
   const filed = (notes ?? []).filter((n) => n.pillar === pillar);
+  const chats = (threads ?? []).filter((t) => t.pillar === pillar);
 
   async function addEntry() {
     const text = content.trim();
@@ -76,9 +81,6 @@ function PillarBody({ pillar }: { pillar: Pillar }) {
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-2xl font-semibold tracking-tight">{meta.label}</h1>
-            <span className="rounded-full border border-border px-2 py-0.5 text-[10px] uppercase tracking-widest text-muted-foreground">
-              Premade
-            </span>
           </div>
           <p className="mt-1 text-sm text-muted-foreground">{meta.blurb}</p>
         </div>
@@ -124,6 +126,44 @@ function PillarBody({ pillar }: { pillar: Pillar }) {
           {filed.length === 0 && (
             <li className="text-sm text-muted-foreground">
               No notes filed here yet. Label a note with {meta.label} and it lands in this folder.
+            </li>
+          )}
+        </ul>
+      </section>
+
+      <section className="mt-8">
+        <div className="flex items-center justify-between">
+          <h2 className="text-[11px] uppercase tracking-widest text-muted-foreground">
+            Chats in this folder ({chats.length})
+          </h2>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={async () => {
+              await createThread.mutateAsync({ pillar, title: `${meta.label} chat` });
+              navigate({ to: "/home" });
+            }}
+          >
+            <MessageSquare className="size-4" /> New chat here
+          </Button>
+        </div>
+        <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+          {chats.map((thread) => (
+            <li key={thread.id} className="panel flex items-center gap-2 rounded-lg p-3">
+              <MessageSquare className="size-4 shrink-0 text-muted-foreground" />
+              <span className="min-w-0 flex-1 truncate text-sm font-medium">{thread.title}</span>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => updateThread.mutate({ id: thread.id, pillar: null })}
+              >
+                Unfile
+              </Button>
+            </li>
+          ))}
+          {chats.length === 0 && (
+            <li className="text-sm text-muted-foreground">
+              No chats filed here yet.
             </li>
           )}
         </ul>
