@@ -1,7 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
-import type { Pillar } from "@/lib/pillars";
 
 export type PillarEntry = Database["public"]["Tables"]["pillar_entries"]["Row"];
 export type AppLink = Database["public"]["Tables"]["apps"]["Row"];
@@ -33,7 +32,7 @@ export function useSettings() {
   });
 }
 
-export function usePillarEntries(pillar?: Pillar) {
+export function usePillarEntries(pillar?: string) {
   return useQuery({
     queryKey: ["pillar_entries", pillar ?? "all"],
     queryFn: () => {

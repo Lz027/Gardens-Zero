@@ -7,7 +7,8 @@ import { useNotes } from "@/lib/desk-queries";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { PILLARS, PILLAR_META } from "@/lib/pillars";
+import { accentText, iconFor } from "@/lib/pillars";
+import { usePillars } from "@/lib/pillar-queries";
 
 export const Route = createFileRoute("/_authenticated/settings")({
   head: () => ({
@@ -28,6 +29,7 @@ function SettingsPage() {
   const { data: profile } = useProfile();
   const { data: notes } = useNotes();
   const { data: apps } = useApps();
+  const { data: pillars } = usePillars();
   const invalidate = useInvalidate();
   const [displayName, setDisplayName] = useState("");
 
@@ -84,23 +86,24 @@ function SettingsPage() {
 
         <section>
           <h2 className="text-[11px] uppercase tracking-widest text-muted-foreground">
-            Pillar folders
+            Your folders
           </h2>
+          <p className="mt-1 text-xs text-muted-foreground">
+            The first four came ready-made. Open a folder to rename it, change its icon or delete
+            it, and add your own from the bar at the bottom of the workspace.
+          </p>
           <ul className="mt-2 space-y-2">
-            {PILLARS.map((pillar) => {
-              const meta = PILLAR_META[pillar];
-              const Icon = meta.icon;
-              const count = (notes ?? []).filter((n) => n.pillar === pillar).length;
+            {(pillars ?? []).map((pillar) => {
+              const Icon = iconFor(pillar.icon);
+              const count = (notes ?? []).filter((n) => n.pillar === pillar.slug).length;
               return (
-                <li key={pillar} className="panel flex items-center gap-3 rounded-lg p-3">
-                  <Icon
-                    className={meta.accent === "iris" ? "size-4 text-iris" : "size-4 text-teal"}
-                  />
+                <li key={pillar.id} className="panel flex items-center gap-3 rounded-lg p-3">
+                  <Icon className={`size-4 shrink-0 ${accentText(pillar.accent)}`} />
                   <div className="min-w-0 flex-1">
-                    <div className="text-sm font-medium">{meta.label}</div>
-                    <p className="truncate text-xs text-muted-foreground">{meta.blurb}</p>
+                    <div className="truncate text-sm font-medium">{pillar.label}</div>
+                    <p className="truncate text-xs text-muted-foreground">{pillar.blurb}</p>
                   </div>
-                  <span className="text-xs text-muted-foreground">{count} notes</span>
+                  <span className="shrink-0 text-xs text-muted-foreground">{count} notes</span>
                 </li>
               );
             })}

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Maximize2, Minus, Minimize2, X } from "lucide-react";
 import { useDeleteNote, useUpdateNote, type Note } from "@/lib/desk-queries";
-import { PILLARS, PILLAR_META } from "@/lib/pillars";
+import { usePillars } from "@/lib/pillar-queries";
 import { cn } from "@/lib/utils";
 
 type Geometry = { pos_x: number; pos_y: number; width: number; height: number };
@@ -17,6 +17,7 @@ export function NoteWindow({
 }) {
   const update = useUpdateNote();
   const remove = useDeleteNote();
+  const { data: pillars } = usePillars();
 
   const [geo, setGeo] = useState<Geometry>({
     pos_x: note.pos_x,
@@ -186,16 +187,16 @@ export function NoteWindow({
           onChange={(e) =>
             update.mutate({
               id: note.id,
-              pillar: e.target.value === "" ? null : (e.target.value as Note["pillar"]),
+              pillar: e.target.value === "" ? null : e.target.value,
             })
           }
           className="h-6 rounded border border-input bg-card px-1 text-[11px] text-foreground"
           aria-label="File note under a pillar"
         >
           <option value="">Unfiled</option>
-          {PILLARS.map((p) => (
-            <option key={p} value={p}>
-              {PILLAR_META[p].label}
+          {(pillars ?? []).map((p) => (
+            <option key={p.id} value={p.slug}>
+              {p.label}
             </option>
           ))}
         </select>
