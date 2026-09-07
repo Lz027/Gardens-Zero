@@ -10,11 +10,22 @@ import {
   useUpdateThread,
   type Thread,
 } from "@/lib/chat-queries";
-import { PILLARS, PILLAR_META, type Pillar } from "@/lib/pillars";
+import { accentChip, iconFor, accentText } from "@/lib/pillars";
+import { usePillars } from "@/lib/pillar-queries";
 import { useWallpaper } from "@/lib/wallpaper";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+
+function dayLabel(iso: string) {
+  const d = new Date(iso);
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1);
+  if (d.toDateString() === today.toDateString()) return "Today";
+  if (d.toDateString() === yesterday.toDateString()) return "Yesterday";
+  return d.toLocaleDateString([], { day: "numeric", month: "long", year: "numeric" });
+}
 
 function timeLabel(iso: string) {
   const d = new Date(iso);
@@ -29,7 +40,8 @@ export function ChatMode() {
   const createThread = useCreateThread();
   const [activeId, setActiveId] = useState<string | null>(null);
   const [query, setQuery] = useState("");
-  const [pillarFilter, setPillarFilter] = useState<Pillar | "all">("all");
+  const [pillarFilter, setPillarFilter] = useState<string>("all");
+  const { data: pillars } = usePillars();
   const { style } = useWallpaper();
 
   const list = useMemo(() => {
@@ -72,19 +84,19 @@ export function ChatMode() {
         </div>
 
         <div className="flex gap-1.5 overflow-x-auto px-3 pb-2">
-          {(["all", ...PILLARS] as const).map((key) => (
+          {[{ id: "all", slug: "all", label: "All" }, ...(pillars ?? [])].map((p) => (
             <button
-              key={key}
+              key={p.id}
               type="button"
-              onClick={() => setPillarFilter(key)}
+              onClick={() => setPillarFilter(p.slug)}
               className={cn(
                 "shrink-0 rounded-full border border-border px-2.5 py-1 text-[11px] transition-colors",
-                pillarFilter === key
+                pillarFilter === p.slug
                   ? "bg-primary text-primary-foreground"
                   : "text-muted-foreground hover:text-foreground",
               )}
             >
-              {key === "all" ? "All" : PILLAR_META[key].label}
+              {p.label}
             </button>
           ))}
         </div>
@@ -134,7 +146,8 @@ function ThreadRow({
   active: boolean;
   onOpen: () => void;
 }) {
-  const meta = thread.pillar ? PILLAR_META[thread.pillar as Pillar] : null;
+  const { data: pillars } = usePillars();
+  const meta = (pillars ?? []).find((p) => p.slug === thread.pillar) ?? null;
   return (
     <button
       type="button"
@@ -158,7 +171,7 @@ function ThreadRow({
           <span
             className={cn(
               "mt-1 inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[10px]",
-              meta.accent === "iris" ? "bg-iris/15 text-iris" : "bg-teal/15 text-teal",
+              accentChip(meta.accent),
             )}
           >
             {meta.label}
@@ -177,9 +190,19 @@ function Conversation({ thread, onBack }: { thread: Thread; onBack: () => void }
   const { data: messages } = useMessages(thread.id);
   const [draft, setDraft] = useState("");
   const bottom = useRef<HTMLDivElement | null>(null);
+  const inputRef = useRef<HTMLTextAreaElement | null>(null);
+  const { data: convPillars } = usePillars();
+
+  // grow the message box with the text, up to a comfortable ceiling
+  useEffect(() => {
+    const el = inputRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${Math.min(el.scrollHeight, 160)}px`;
+  }, [draft]);
 
   useEffect(() => {
-    bottom.current?.scrollIntoView({ block: "end" });
+    bottom.current?.scrollIntoView({ block: "end", behavior: "smooth" });
   }, [thread.id, messages?.length]);
 
   function submit() {
@@ -215,16 +238,16 @@ function Conversation({ thread, onBack }: { thread: Thread; onBack: () => void }
           onChange={(e) =>
             updateThread.mutate({
               id: thread.id,
-              pillar: (e.target.value || null) as Pillar | null,
+              pillar: e.target.value || null,
             })
           }
           aria-label="File this chat under a pillar"
           className="h-8 rounded-md border border-input bg-card px-2 text-xs text-foreground"
         >
           <option value="">No pillar</option>
-          {PILLARS.map((p) => (
-            <option key={p} value={p}>
-              {PILLAR_META[p].label}
+          {(convPillars ?? []).map((p) => (
+            <option key={p.id} value={p.slug}>
+              {p.label}
             </option>
           ))}
         </select>
@@ -248,24 +271,43 @@ function Conversation({ thread, onBack }: { thread: Thread; onBack: () => void }
             No messages yet — say something to yourself.
           </p>
         )}
-        {(messages ?? []).map((message) => (
-          <div key={message.id} className="group flex items-center justify-end gap-1">
-            <button
-              type="button"
-              onClick={() => removeMessage.mutate({ id: message.id, threadId: thread.id })}
-              aria-label="Delete message"
-              className="rounded-full p-1 text-muted-foreground opacity-0 transition-opacity hover:text-destructive group-hover:opacity-100"
-            >
-              <X className="size-3.5" />
-            </button>
-            <p className="max-w-[85%] whitespace-pre-wrap break-words rounded-2xl rounded-br-md bg-primary px-3 py-2 text-sm text-primary-foreground shadow-sm sm:max-w-[70%]">
-              {message.text_content}
-              <span className="mt-1 block text-right text-[10px] text-primary-foreground/70">
-                {timeLabel(message.created_at)}
-              </span>
-            </p>
-          </div>
-        ))}
+        {(messages ?? []).map((message, i, all) => {
+          const prev = i > 0 ? all[i - 1] : null;
+          const newDay =
+            !prev ||
+            new Date(prev.created_at).toDateString() !==
+              new Date(message.created_at).toDateString();
+          return (
+            <div key={message.id}>
+              {newDay && (
+                <div className="my-3 flex justify-center">
+                  <span className="rounded-full bg-card/90 px-2.5 py-1 text-[10px] text-muted-foreground shadow-sm">
+                    {dayLabel(message.created_at)}
+                  </span>
+                </div>
+              )}
+              <div className="group flex items-center justify-end gap-1">
+                <button
+                  type="button"
+                  onClick={() => removeMessage.mutate({ id: message.id, threadId: thread.id })}
+                  aria-label="Delete message"
+                  className="rounded-full p-1 text-muted-foreground opacity-0 transition-opacity hover:text-destructive focus-visible:opacity-100 group-hover:opacity-100"
+                >
+                  <X className="size-3.5" />
+                </button>
+                <p className="max-w-[85%] whitespace-pre-wrap break-words rounded-2xl rounded-br-md bg-primary px-3.5 py-2 text-[15px] leading-relaxed text-primary-foreground shadow-sm sm:max-w-[65%] sm:text-sm">
+                  {message.text_content}
+                  <span className="mt-1 block text-right text-[10px] text-primary-foreground/70">
+                    {new Date(message.created_at).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </span>
+                </p>
+              </div>
+            </div>
+          );
+        })}
         <div ref={bottom} />
       </div>
 
@@ -277,6 +319,7 @@ function Conversation({ thread, onBack }: { thread: Thread; onBack: () => void }
         className="flex items-end gap-2 border-t border-border bg-card/80 p-2 backdrop-blur"
       >
         <textarea
+          ref={inputRef}
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
           onKeyDown={(e) => {
@@ -288,7 +331,7 @@ function Conversation({ thread, onBack }: { thread: Thread; onBack: () => void }
           rows={1}
           placeholder="Write a message"
           aria-label="Message"
-          className="max-h-32 min-h-10 min-w-0 flex-1 resize-none rounded-2xl border border-input bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="max-h-40 min-h-11 min-w-0 flex-1 resize-none rounded-2xl border border-input bg-background px-4 py-2.5 text-[15px] leading-relaxed outline-none focus-visible:ring-2 focus-visible:ring-ring sm:text-sm"
         />
         <Button type="submit" size="icon" aria-label="Send" disabled={!draft.trim()}>
           <SendHorizonal className="size-4" />
