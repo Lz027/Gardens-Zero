@@ -53,7 +53,7 @@ function Workspace() {
 
   return (
     <div className="flex h-full min-h-0 flex-col">
-      <div className="flex items-center gap-2 border-b border-border px-3 py-2">
+      <div className="hidden items-center gap-2 border-b border-border px-3 py-2 md:flex">
         <div className="hidden items-center gap-1 rounded-full border border-border p-0.5 md:flex">
           {(
             [
