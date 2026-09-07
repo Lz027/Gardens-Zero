@@ -1,8 +1,8 @@
-# Garden Zero
+# Gardens Zero
 
 > A private digital workspace for notes, conversations, planning, and the links that keep a project moving.
 
-Garden Zero is a desktop-style personal workspace built around the feeling of a small operating system. Instead of forcing every thought into a list, it gives the user a visual desk: notes can live in movable windows, related work can be grouped into **pillars**, conversations can be saved for later, and frequently used links can be kept in an application dock.
+Gardens Zero is a desktop-style personal workspace built around the feeling of a small operating system. Instead of forcing every thought into a list, it gives the user a visual desk: notes can live in movable windows, related work can be grouped into **pillars**, conversations can be saved for later, and frequently used links can be kept in an application dock.
 
 The project combines a calm, responsive interface with authenticated persistence, giving each signed-in user a private space for thinking, organizing, and returning to unfinished work.
 
