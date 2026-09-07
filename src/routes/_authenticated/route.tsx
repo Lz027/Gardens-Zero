@@ -90,14 +90,24 @@ function WorkspaceShell() {
             </kbd>
           </button>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
             <span className="hidden text-xs text-muted-foreground sm:block">
               {profile?.display_name ?? profile?.email ?? ""}
             </span>
+            <GuideDialog />
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+            >
+              {theme === "dark" ? <Sun className="size-4" /> : <Moon className="size-4" />}
+            </Button>
             <Button variant="ghost" size="icon-sm" onClick={signOut} aria-label="Sign out">
               <LogOut className="size-4" />
             </Button>
           </div>
+
         </header>
 
         <div className="flex min-h-0 flex-1">
