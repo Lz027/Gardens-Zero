@@ -221,7 +221,9 @@ export function AppDock() {
         </Link>
       </div>
     </aside>
+    </>
   );
+
 }
 
 function DockIcon({ app, className }: { app: AppItem; className?: string }) {
