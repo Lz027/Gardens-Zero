@@ -5,12 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { usePillarEntries, useInvalidate, currentUserId } from "@/lib/queries";
 import { useCreateNote, useNotes, useUpdateNote } from "@/lib/desk-queries";
 import { useCreateThread, useThreads, useUpdateThread } from "@/lib/chat-queries";
-import {
-  usePillars,
-  useUpdatePillar,
-  useDeletePillar,
-  type PillarRow,
-} from "@/lib/pillar-queries";
+import { usePillars, useUpdatePillar, useDeletePillar, type PillarRow } from "@/lib/pillar-queries";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PillarIconPicker } from "@/components/gardens/pillar-icon-picker";

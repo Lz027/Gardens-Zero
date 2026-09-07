@@ -79,7 +79,6 @@ export function WallpaperPicker() {
                 }
                 void apply(`url:${url}`);
               }}
-
             >
               Use
             </Button>

@@ -81,5 +81,9 @@ export function useWallpaper() {
     onSuccess: () => void qc.invalidateQueries({ queryKey: ["profile"] }),
   });
 
-  return { value: profile?.wallpaper ?? DEFAULT_WALLPAPER, style: wallpaperStyle(profile?.wallpaper), set };
+  return {
+    value: profile?.wallpaper ?? DEFAULT_WALLPAPER,
+    style: wallpaperStyle(profile?.wallpaper),
+    set,
+  };
 }

@@ -1,14 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import {
-  CalendarDays,
-  Clock,
-  ListChecks,
-  Plus,
-  Rocket,
-  StickyNote,
-  X,
-} from "lucide-react";
+import { CalendarDays, Clock, ListChecks, Plus, Rocket, StickyNote, X } from "lucide-react";
 import { format } from "date-fns";
 import { MonthGrid } from "@/components/gardens/month-grid";
 import { useEvents } from "@/lib/queries";

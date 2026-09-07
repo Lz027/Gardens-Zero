@@ -45,10 +45,7 @@ export function PillarIconPicker({
             )}
           >
             <span
-              className={cn(
-                "size-2.5 rounded-full",
-                option === "iris" ? "bg-iris" : "bg-teal",
-              )}
+              className={cn("size-2.5 rounded-full", option === "iris" ? "bg-iris" : "bg-teal")}
             />
             {option}
           </button>

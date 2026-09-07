@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { CalendarDays, Globe, LayoutDashboard, Settings as SettingsIcon, StickyNote } from "lucide-react";
+import {
+  CalendarDays,
+  Globe,
+  LayoutDashboard,
+  Settings as SettingsIcon,
+  StickyNote,
+} from "lucide-react";
 import {
   CommandDialog,
   CommandEmpty,

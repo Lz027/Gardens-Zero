@@ -59,7 +59,9 @@ export function GuideDialog({ trigger }: { trigger?: React.ReactNode }) {
       <DialogContent className="max-h-[80vh] overflow-y-auto sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>How Gardens Zero works</DialogTitle>
-          <DialogDescription>A short guide to the desk, the dock and the pillars.</DialogDescription>
+          <DialogDescription>
+            A short guide to the desk, the dock and the pillars.
+          </DialogDescription>
         </DialogHeader>
         <Accordion type="single" collapsible className="w-full">
           {FAQ.map((item) => (

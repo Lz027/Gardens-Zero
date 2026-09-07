@@ -297,7 +297,12 @@ function BinDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (v: bo
           )}
           {(trashed ?? []).map((note) => (
             <NoteRow key={note.id} note={note}>
-              <Button variant="ghost" size="icon-sm" aria-label="Restore note" onClick={() => restore.mutate(note.id)}>
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                aria-label="Restore note"
+                onClick={() => restore.mutate(note.id)}
+              >
                 <RotateCcw className="size-4" />
               </Button>
               <Button
@@ -321,8 +326,21 @@ function BinDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (v: bo
 export function NotepadGlyph({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" aria-hidden className={cn("shrink-0", className)}>
-      <rect x="4" y="2.5" width="16" height="19" rx="3" className="fill-iris/25 stroke-iris/60" strokeWidth="1.2" />
-      <path d="M8 8h8M8 12h8M8 16h5" className="stroke-teal/70" strokeWidth="1.4" strokeLinecap="round" />
+      <rect
+        x="4"
+        y="2.5"
+        width="16"
+        height="19"
+        rx="3"
+        className="fill-iris/25 stroke-iris/60"
+        strokeWidth="1.2"
+      />
+      <path
+        d="M8 8h8M8 12h8M8 16h5"
+        className="stroke-teal/70"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+      />
     </svg>
   );
 }

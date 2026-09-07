@@ -99,7 +99,10 @@ function CalendarPage() {
 
           <ul className="mt-4 space-y-2">
             {dayEvents.map((event) => (
-              <li key={event.id} className="flex items-center gap-2 rounded-lg border border-border px-3 py-2">
+              <li
+                key={event.id}
+                className="flex items-center gap-2 rounded-lg border border-border px-3 py-2"
+              >
                 <span className="shrink-0 text-xs text-muted-foreground">
                   {format(new Date(event.starts_at), "HH:mm")}
                 </span>

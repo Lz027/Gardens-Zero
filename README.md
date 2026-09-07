@@ -1,82 +1,123 @@
 # Gardens Zero
 
-A personal workspace that feels like a small operating system: a notes desk with
-floating windows and widgets, a chat mode for quick thinking, customizable
-folders ("pillars"), a calendar, and an app dock — all private to one signed-in
-person.
+Gardens Zero is a private, desktop-style workspace for turning scattered thoughts into an organized personal system. It combines a floating notes desk, persistent folders called **pillars**, a calendar, a focused chat mode, customizable widgets, and an application dock in one calm, visual environment.
 
-**Live app**: https://garden-of-zero.lovable.app
+The project is designed around the idea that a workspace should feel less like a dashboard and more like a small operating system: personal, spatial, and easy to return to.
 
-## What's inside
+## Product overview
 
-| Area | What it does |
-| --- | --- |
-| Desk (`/home`, desk mode) | Draggable, resizable note windows, desktop folders, recycle bin, right-click to place a note or folder, background picker, addable widgets |
-| Chat mode (`/home`, chat mode) | WhatsApp-style saved conversations with date separators, rename, delete, pillar filing. Default on phones |
-| Widgets | Calendar, clock, up-next agenda and shortcuts cards; drag to place, positions kept in the browser |
-| Folders (`/pillars/$pillar`) | Customizable named folders with a pick-your-icon set and accent colour. Four starters are seeded and can be renamed or deleted |
-| Calendar (`/calendar`) | Month grid with event chips, day panel to add and remove events |
-| Settings (`/settings`) | Profile, theme, folder management |
-| Auth (`/auth`) | Email and Google sign-in; everything behind `/_authenticated` |
+| Area                         | Implemented experience                                                                                                                                     |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Desk (`/home`)               | A draggable workspace with floating note windows, desktop folders, a recycle bin, contextual placement actions, widgets, and selectable wallpapers.        |
+| Chat mode (`/home`)          | Saved conversations with date separators, renaming, deletion, and filing into pillars. On smaller screens, chat is the default workspace mode.             |
+| Widgets                      | Calendar, clock, upcoming agenda, and shortcuts widgets. Positions are persisted in the browser so the desk can be arranged to suit the user.              |
+| Pillars (`/pillars/:pillar`) | User-owned folders with editable names, descriptions, icons, accent colors, and progress-oriented entries. Starter pillars are seeded for a new workspace. |
+| Calendar (`/calendar`)       | A monthly calendar with event chips, a day detail panel, and event creation and removal.                                                                   |
+| Settings (`/settings`)       | Profile information, appearance preferences, and pillar management.                                                                                        |
+| Authentication (`/auth`)     | Email/password registration and sign-in, plus Google OAuth through Supabase. Authenticated routes are protected by the application route guard.            |
 
-Light theme is the default with a dark toggle; the choice is stored per person.
-The app is installable as a PWA (manifest plus 192/512/1024 and maskable icons).
+The interface supports light and dark themes, responsive layouts, keyboard-friendly controls, installable PWA metadata, and browser-persisted theme and workspace preferences.
 
-## Tech
+## Technology
 
-- TanStack Start v1 (React 19, file-based routing in `src/routes`), Vite 7
-- Tailwind CSS v4 via `src/styles.css`, shadcn/ui components
-- TanStack Query for all reads and writes
-- Supabase for database, auth and storage, with row-level security per user
+Gardens Zero is built as a full-stack React application using TanStack Start and file-based TanStack Router routes. Supabase provides authentication, PostgreSQL data access, storage integration, and row-level security. TanStack Query manages client-side reads, mutations, caching, and invalidation.
 
-## Project layout
+| Layer                   | Technology                                                      |
+| ----------------------- | --------------------------------------------------------------- |
+| Application framework   | TanStack Start with React 19                                    |
+| Routing                 | TanStack Router file-based routing                              |
+| Build system            | Vite with Nitro                                                 |
+| Styling                 | Tailwind CSS v4 and project-specific CSS tokens                 |
+| UI primitives           | Radix UI components with reusable application wrappers          |
+| Data and authentication | Supabase and `@supabase/supabase-js`                            |
+| Client data state       | TanStack Query                                                  |
+| AI and chat UI          | AI SDK, Streamdown, Markdown, code, math, and Mermaid renderers |
+| Motion and interaction  | Motion, Embla Carousel, and custom workspace interactions       |
+| Validation and tooling  | TypeScript, ESLint, Prettier, and Zod                           |
 
-```
+## Project structure
+
+```text
 src/
-  routes/                 file-based routes (__root, index, auth, _authenticated/*)
-  components/gardens/     desk, widgets, chat, dock, taskbar, calendar grid, logo
-  components/ui/          shadcn primitives
-  lib/                    queries (desk, chat, pillars, events), theme, wallpaper, utils
-  integrations/supabase/  generated client and types
+  routes/                    File-based application routes and layouts
+  components/gardens/        Desk, chat, dock, widgets, pillars, calendar, and brand UI
+  components/ui/             Reusable interface primitives
+  integrations/supabase/     Browser/server clients and generated database types
+  lib/                       Queries, theme, wallpaper, auth helpers, and utilities
+  assets/                    Product and brand assets
+  styles.css                Global theme tokens and application styling
+public/
+  manifest.webmanifest       PWA metadata
+  favicon.png                Browser favicon
+  apple-touch-icon.png       iOS home-screen icon
 supabase/
-  gardens-zero-schema.sql full schema: tables, grants, RLS policies, seeds
+  gardens-zero-schema.sql    Database schema, policies, grants, and starter data
 ```
 
-## Backend configuration (environment only)
+## Routes
 
-No keys are hardcoded. The client reads:
+| Route              | Purpose                                                                 |
+| ------------------ | ----------------------------------------------------------------------- |
+| `/`                | Entry point that directs users to the workspace or authentication flow. |
+| `/auth`            | Sign-in and account creation.                                           |
+| `/home`            | Authenticated desk and chat workspace.                                  |
+| `/calendar`        | Authenticated calendar view.                                            |
+| `/pillars/:pillar` | A single authenticated pillar and its entries.                          |
+| `/settings`        | Authenticated profile, theme, and pillar settings.                      |
 
-```
-VITE_SUPABASE_URL=...
-VITE_SUPABASE_PUBLISHABLE_KEY=...
-VITE_SUPABASE_PROJECT_ID=...
-```
+TanStack Start generates the route tree from the files in `src/routes`. The generated route manifest should not be edited manually.
 
-To deploy outside Lovable (e.g. Netlify):
+## Data model
 
-1. Set those three variables in the host's environment settings.
-2. Build command `npm run build`, then serve the produced output.
-3. In the Supabase project, set the site URL to your deployed domain and add it
-   to the redirect allow-list, then enable Email and Google providers.
-4. If you are starting a fresh database, run `supabase/gardens-zero-schema.sql`
-   in the SQL editor — it is re-runnable and seeds the starter folders.
+The Supabase schema is defined in `supabase/gardens-zero-schema.sql`. The principal tables are organized around a single user-owned workspace.
+
+| Table group                                        | Responsibility                                                               |
+| -------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `profiles`                                         | Display name, biography, links, wallpaper, and theme preferences.            |
+| `pillars` and `pillar_entries`                     | Personal folders and progress/status entries associated with each folder.    |
+| `notes` and `note_folders`                         | Desk notes, spatial position, size, open/minimized state, and soft deletion. |
+| `threads` and `messages`                           | Saved chat conversations and message history.                                |
+| `events`                                           | Calendar events and their dates.                                             |
+| `apps`, `recents`, `notifications`, and `settings` | Dock links, recent activity, alerts, and additional workspace settings.      |
+
+The schema uses Supabase row-level security so authenticated users can access only their own workspace data.
 
 ## Local development
 
+Install the project dependencies and start the Vite development server:
+
 ```sh
-npm i
-npm run dev     # http://localhost:8080
+npm install
+npm run dev
 ```
 
-## Data model (summary)
+The development server runs on port `8080` by default.
 
-- `profiles` — display name, bio, links, wallpaper, theme
-- `pillars` — user-owned folders: slug, label, blurb, icon, accent, sort order
-- `notes`, `note_folders` — desk notes with position, size, open/minimized state,
-  soft delete via `deleted_at`
-- `threads`, `messages` — chat conversations and their bubbles
-- `pillar_entries` — status log entries per folder
-- `events` — calendar items
-- `apps`, `recents`, `notifications`, `settings` — dock links, history, alerts
+Before running the application, configure the Supabase values used by the browser and server clients:
 
-Every table is row-level-secured to `auth.uid()` and granted to `authenticated`.
+```sh
+VITE_SUPABASE_URL=your-supabase-project-url
+VITE_SUPABASE_PUBLISHABLE_KEY=your-supabase-publishable-key
+SUPABASE_URL=your-supabase-project-url
+SUPABASE_PUBLISHABLE_KEY=your-supabase-publishable-key
+SUPABASE_SERVICE_ROLE_KEY=your-server-only-service-role-key
+```
+
+The service-role key is server-only and must never be exposed to browser code. Configure the authentication redirect URLs and Google provider in the Supabase project before testing OAuth locally or in a deployed environment. For a new database, run `supabase/gardens-zero-schema.sql` in the Supabase SQL editor.
+
+## Available commands
+
+| Command             | Purpose                               |
+| ------------------- | ------------------------------------- |
+| `npm run dev`       | Start the Vite development server.    |
+| `npm run build`     | Create a production build.            |
+| `npm run build:dev` | Create a development-mode build.      |
+| `npm run preview`   | Preview the production build locally. |
+| `npm run lint`      | Run ESLint across the project.        |
+| `npm run format`    | Format project files with Prettier.   |
+
+## Design principles
+
+Gardens Zero keeps high-frequency actions close to the workspace surface. Notes remain spatial instead of becoming another long list, pillars provide a simple organizing vocabulary, and the dock makes frequently used links available without taking over the screen. The visual system uses soft surfaces, restrained contrast, and subtle motion to keep the experience focused while still feeling personal.
+
+The repository is intended as a portfolio project demonstrating full-stack React application structure, authenticated CRUD flows, responsive workspace interactions, route-level data loading, Supabase row-level security, and a cohesive product interface.

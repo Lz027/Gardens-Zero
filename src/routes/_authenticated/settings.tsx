@@ -69,9 +69,7 @@ function SettingsPage() {
         </div>
 
         <section>
-          <h2 className="text-[11px] uppercase tracking-widest text-muted-foreground">
-            Workspace
-          </h2>
+          <h2 className="text-[11px] uppercase tracking-widest text-muted-foreground">Workspace</h2>
           <div className="mt-2 grid grid-cols-2 gap-2">
             <div className="panel rounded-lg p-3">
               <div className="text-lg font-semibold">{notes?.length ?? 0}</div>

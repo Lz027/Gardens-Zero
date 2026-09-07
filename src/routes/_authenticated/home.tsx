@@ -79,7 +79,6 @@ function Workspace() {
             </button>
           ))}
         </div>
-        
       </div>
 
       <div className="min-h-0 flex-1">{effective === "chat" ? <ChatMode /> : <Desk />}</div>
@@ -141,7 +140,6 @@ function Desk() {
         <DesktopItems bounds={canvas} />
         <DeskWidgets bounds={canvas} onNewNote={() => newNote()} />
 
-
         {menu && (
           <div
             className="soft-card absolute z-[999] w-44 overflow-hidden rounded-lg border border-border bg-popover p-1 text-sm shadow-lg"
@@ -171,14 +169,18 @@ function Desk() {
           </div>
         )}
 
-
         {open.length === 0 && (
           <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-3 text-center">
             <StickyNote className="size-8 text-muted-foreground" />
             <p className="text-sm text-muted-foreground">
               An empty desk. Open a note and start writing.
             </p>
-            <Button variant="outline" size="sm" onClick={() => newNote()} className="pointer-events-auto">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => newNote()}
+              className="pointer-events-auto"
+            >
               New note
             </Button>
           </div>

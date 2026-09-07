@@ -28,12 +28,10 @@ export function usePillars() {
       );
       if (rows.length > 0) return rows;
       const user_id = await userId();
-      await supabase
-        .from("pillars")
-        .upsert(
-          STARTER_PILLARS.map((p, i) => ({ user_id, ...p, sort_order: i })),
-          { onConflict: "user_id,slug" },
-        );
+      await supabase.from("pillars").upsert(
+        STARTER_PILLARS.map((p, i) => ({ user_id, ...p, sort_order: i })),
+        { onConflict: "user_id,slug" },
+      );
       return unwrap<PillarRow[]>(
         supabase.from("pillars").select("*").order("sort_order", { ascending: true }),
       );

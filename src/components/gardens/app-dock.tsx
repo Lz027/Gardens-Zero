@@ -98,7 +98,6 @@ export function AppDock() {
     setMobileOpen(false);
   }, [pathname]);
 
-
   const createApp = useCreateApp();
   const updateApp = useUpdateApp();
   const deleteApp = useDeleteApp();
@@ -164,111 +163,109 @@ export function AppDock() {
         />
       )}
 
-    <aside
-      className={cn(
-        "fixed inset-y-0 left-0 z-50 flex w-56 shrink-0 flex-col border-r border-sidebar-border/70 bg-sidebar transition-transform duration-300 md:static md:z-auto md:w-auto md:translate-x-0 md:transition-[width]",
-        mobileOpen ? "translate-x-0" : "-translate-x-full",
-        desktopHidden ? "md:hidden" : "md:flex",
-        expanded ? "md:w-[26rem]" : "md:w-[8.5rem]",
-      )}
-    >
-
-      <div className="flex items-center justify-between px-4 py-4">
-        <Link to="/home">
-          <GardensWordmark compact={!expanded} />
-        </Link>
-      </div>
-
-      <div className="flex items-center gap-1 px-3 pb-2">
-        <span className="mr-auto text-[11px] tracking-wide text-muted-foreground">
-          Apps {roots.length}/{MAX_APPS}
-        </span>
-        <Button
-          variant={editing ? "secondary" : "ghost"}
-          size="icon-sm"
-          onClick={() => {
-            setEditing((v) => !v);
-            setSelected([]);
-          }}
-          aria-label={editing ? "Done editing apps" : "Edit apps"}
-        >
-          {editing ? <Check className="size-4" /> : <Pencil className="size-4" />}
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon-sm"
-          onClick={() => void deleteSelected()}
-          disabled={selected.length === 0}
-          aria-label="Delete selected apps"
-          className="text-muted-foreground hover:text-destructive"
-        >
-          <Trash2 className="size-4" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon-sm"
-          onClick={() => setMode(expanded ? "normal" : "wide")}
-          aria-label={expanded ? "Collapse dock" : "Expand dock"}
-        >
-          {expanded ? (
-            <ChevronsRightLeft className="size-4" />
-          ) : (
-            <ChevronsLeftRight className="size-4" />
-          )}
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon-sm"
-          onClick={() => setMode("hidden")}
-          aria-label="Hide dock"
-        >
-          <PanelLeftClose className="size-4" />
-        </Button>
-      </div>
-
-      <div className="flex-1 overflow-y-auto px-3 pb-4">
-        <div className={cn("grid gap-2", expanded ? "grid-cols-6" : "grid-cols-2")}>
-          {roots.map((app) => (
-            <DockTile
-              key={app.id}
-              app={app}
-              folderChildren={childrenOf(app.id)}
-              editing={editing}
-              selected={selected.includes(app.id)}
-              onSelect={() => toggleSelected(app.id)}
-              isDropTarget={dropId === app.id && dragId !== app.id}
-              onDragStart={() => setDragId(app.id)}
-              onDragEnd={() => {
-                setDragId(null);
-                setDropId(null);
-              }}
-              onDragOver={() => setDropId(app.id)}
-              onDrop={() => void handleDrop(app)}
-            />
-          ))}
-          {roots.length < MAX_APPS && <AddAppTile />}
+      <aside
+        className={cn(
+          "fixed inset-y-0 left-0 z-50 flex w-56 shrink-0 flex-col border-r border-sidebar-border/70 bg-sidebar transition-transform duration-300 md:static md:z-auto md:w-auto md:translate-x-0 md:transition-[width]",
+          mobileOpen ? "translate-x-0" : "-translate-x-full",
+          desktopHidden ? "md:hidden" : "md:flex",
+          expanded ? "md:w-[26rem]" : "md:w-[8.5rem]",
+        )}
+      >
+        <div className="flex items-center justify-between px-4 py-4">
+          <Link to="/home">
+            <GardensWordmark compact={!expanded} />
+          </Link>
         </div>
-        <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground">
-          Click opens the app. Drag one onto another to make a folder. Right-click to share.
-        </p>
-      </div>
 
-      <div className="border-t border-sidebar-border/70 p-3">
-        <Link
-          to="/settings"
-          className={cn(
-            "flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-sm text-sidebar-foreground transition-colors hover:bg-sidebar-accent",
-            pathname === "/settings" && "bg-sidebar-accent font-medium",
-          )}
-        >
-          <SettingsIcon className="size-4" />
-          {expanded && "Settings"}
-        </Link>
-      </div>
-    </aside>
+        <div className="flex items-center gap-1 px-3 pb-2">
+          <span className="mr-auto text-[11px] tracking-wide text-muted-foreground">
+            Apps {roots.length}/{MAX_APPS}
+          </span>
+          <Button
+            variant={editing ? "secondary" : "ghost"}
+            size="icon-sm"
+            onClick={() => {
+              setEditing((v) => !v);
+              setSelected([]);
+            }}
+            aria-label={editing ? "Done editing apps" : "Edit apps"}
+          >
+            {editing ? <Check className="size-4" /> : <Pencil className="size-4" />}
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={() => void deleteSelected()}
+            disabled={selected.length === 0}
+            aria-label="Delete selected apps"
+            className="text-muted-foreground hover:text-destructive"
+          >
+            <Trash2 className="size-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={() => setMode(expanded ? "normal" : "wide")}
+            aria-label={expanded ? "Collapse dock" : "Expand dock"}
+          >
+            {expanded ? (
+              <ChevronsRightLeft className="size-4" />
+            ) : (
+              <ChevronsLeftRight className="size-4" />
+            )}
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={() => setMode("hidden")}
+            aria-label="Hide dock"
+          >
+            <PanelLeftClose className="size-4" />
+          </Button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto px-3 pb-4">
+          <div className={cn("grid gap-2", expanded ? "grid-cols-6" : "grid-cols-2")}>
+            {roots.map((app) => (
+              <DockTile
+                key={app.id}
+                app={app}
+                folderChildren={childrenOf(app.id)}
+                editing={editing}
+                selected={selected.includes(app.id)}
+                onSelect={() => toggleSelected(app.id)}
+                isDropTarget={dropId === app.id && dragId !== app.id}
+                onDragStart={() => setDragId(app.id)}
+                onDragEnd={() => {
+                  setDragId(null);
+                  setDropId(null);
+                }}
+                onDragOver={() => setDropId(app.id)}
+                onDrop={() => void handleDrop(app)}
+              />
+            ))}
+            {roots.length < MAX_APPS && <AddAppTile />}
+          </div>
+          <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground">
+            Click opens the app. Drag one onto another to make a folder. Right-click to share.
+          </p>
+        </div>
+
+        <div className="border-t border-sidebar-border/70 p-3">
+          <Link
+            to="/settings"
+            className={cn(
+              "flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-sm text-sidebar-foreground transition-colors hover:bg-sidebar-accent",
+              pathname === "/settings" && "bg-sidebar-accent font-medium",
+            )}
+          >
+            <SettingsIcon className="size-4" />
+            {expanded && "Settings"}
+          </Link>
+        </div>
+      </aside>
     </>
   );
-
 }
 
 function DockIcon({ app, className }: { app: AppItem; className?: string }) {
@@ -440,7 +437,9 @@ function DockTile({
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => void updateApp.mutate({ id: folderChildren[0]?.id ?? "", parent_id: null })}
+            onClick={() =>
+              void updateApp.mutate({ id: folderChildren[0]?.id ?? "", parent_id: null })
+            }
             disabled={folderChildren.length === 0}
           >
             Pull one out

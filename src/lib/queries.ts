@@ -59,11 +59,7 @@ export function useRecents() {
     queryKey: ["recents"],
     queryFn: () =>
       unwrap<Recent[]>(
-        supabase
-          .from("recents")
-          .select("*")
-          .order("visited_at", { ascending: false })
-          .limit(8),
+        supabase.from("recents").select("*").order("visited_at", { ascending: false }).limit(8),
       ),
   });
 }
@@ -99,10 +95,7 @@ export function useInvalidate() {
   };
 }
 
-export function useMutate<TInput>(
-  fn: (input: TInput) => Promise<unknown>,
-  invalidate: string[],
-) {
+export function useMutate<TInput>(fn: (input: TInput) => Promise<unknown>, invalidate: string[]) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: fn,

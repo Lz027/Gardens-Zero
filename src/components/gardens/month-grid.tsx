@@ -15,7 +15,12 @@ import {
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export type CalendarEvent = { id: string; title: string; starts_at: string; pillar?: string | null };
+export type CalendarEvent = {
+  id: string;
+  title: string;
+  starts_at: string;
+  pillar?: string | null;
+};
 
 const WEEKDAYS = ["M", "T", "W", "T", "F", "S", "S"];
 

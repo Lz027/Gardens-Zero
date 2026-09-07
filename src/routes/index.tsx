@@ -21,7 +21,6 @@ export const Route = createFileRoute("/")({
           "Write notes in movable windows, file them into pillar folders, and keep your links one click away in the app dock.",
       },
     ],
-    links: [{ rel: "canonical", href: "https://garden-of-zero.lovable.app/" }],
   }),
   component: Landing,
 });
@@ -72,7 +71,6 @@ function Landing() {
           </span>
         </div>
       </section>
-
 
       <section className="mx-auto grid max-w-4xl gap-3 px-6 pb-24 sm:grid-cols-2">
         {STARTER_PILLARS.map((pillar) => (

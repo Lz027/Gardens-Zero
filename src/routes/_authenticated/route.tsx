@@ -1,6 +1,14 @@
 import { createFileRoute, Outlet, Link, redirect, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { CalendarDays, LayoutDashboard, LogOut, Moon, Search, Settings as SettingsIcon, Sun } from "lucide-react";
+import {
+  CalendarDays,
+  LayoutDashboard,
+  LogOut,
+  Moon,
+  Search,
+  Settings as SettingsIcon,
+  Sun,
+} from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { AppDock } from "@/components/gardens/app-dock";
@@ -12,7 +20,6 @@ import { GardensWordmark } from "@/components/gardens/logo";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/lib/theme";
 import { useProfile } from "@/lib/queries";
-
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
@@ -38,7 +45,6 @@ function WorkspaceShell() {
   const queryClient = useQueryClient();
   const { theme, setTheme } = useTheme();
   const { data: profile } = useProfile();
-
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -67,7 +73,6 @@ function WorkspaceShell() {
           <Link to="/home" className="md:hidden" aria-label="Go to the desk">
             <GardensWordmark />
           </Link>
-
 
           <nav className="hidden items-center gap-1 md:flex">
             {NAV.map((item) => (
@@ -113,7 +118,6 @@ function WorkspaceShell() {
               <LogOut className="size-4" />
             </Button>
           </div>
-
         </header>
 
         <div className="flex min-h-0 flex-1">

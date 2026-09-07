@@ -10,7 +10,7 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
-import { reportLovableError } from "../lib/lovable-error-reporting";
+import { reportError } from "../lib/error-reporting";
 import { supabase } from "@/integrations/supabase/client";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider, themeBootScript } from "@/lib/theme";
@@ -21,9 +21,7 @@ function NotFoundComponent() {
       <div className="max-w-md text-center">
         <h1 className="text-gradient-iris text-7xl font-semibold">404</h1>
         <h2 className="mt-4 text-xl font-semibold text-foreground">Nothing grows here</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          This path isn't part of the workspace.
-        </p>
+        <p className="mt-2 text-sm text-muted-foreground">This path isn't part of the workspace.</p>
         <div className="mt-6">
           <Link
             to="/"
@@ -41,7 +39,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
   useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
+    reportError(error, { boundary: "tanstack_root_error_component" });
   }, [error]);
 
   return (
