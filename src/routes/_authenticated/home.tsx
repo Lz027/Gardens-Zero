@@ -77,7 +77,7 @@ function Workspace() {
             </button>
           ))}
         </div>
-        <span className="text-xs text-muted-foreground md:hidden">Chat notes</span>
+        
       </div>
 
       <div className="min-h-0 flex-1">{effective === "chat" ? <ChatMode /> : <Desk />}</div>
