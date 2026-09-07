@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { GardensLogo } from "@/components/gardens/logo";
 import { Button } from "@/components/ui/button";
-import { PILLARS, PILLAR_META } from "@/lib/pillars";
+import { STARTER_PILLARS } from "@/lib/pillars";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -61,7 +61,7 @@ function Landing() {
         <p className="mx-auto mt-5 max-w-xl text-sm leading-relaxed text-muted-foreground">
           Write in floating note windows on a desk you arrange yourself, or chat your thoughts out
           on your phone. Keep the links you live in as apps, one tap away, and file everything under
-          the pillars that matter to you.
+          folders you name yourself.
         </p>
         <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
           <Button asChild size="lg">
@@ -75,18 +75,18 @@ function Landing() {
 
 
       <section className="mx-auto grid max-w-4xl gap-3 px-6 pb-24 sm:grid-cols-2">
-        {PILLARS.map((pillar) => (
-          <div key={pillar} className="panel rounded-xl p-5 text-left">
+        {STARTER_PILLARS.map((pillar) => (
+          <div key={pillar.slug} className="panel rounded-xl p-5 text-left">
             <div
               className={
-                PILLAR_META[pillar].accent === "iris"
+                pillar.accent === "iris"
                   ? "text-xs uppercase tracking-widest text-iris"
                   : "text-xs uppercase tracking-widest text-teal"
               }
             >
-              {PILLAR_META[pillar].label}
+              {pillar.label}
             </div>
-            <p className="mt-2 text-sm text-muted-foreground">{PILLAR_META[pillar].blurb}</p>
+            <p className="mt-2 text-sm text-muted-foreground">{pillar.blurb}</p>
           </div>
         ))}
       </section>

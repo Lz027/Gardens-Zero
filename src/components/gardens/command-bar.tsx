@@ -11,7 +11,8 @@ import {
 } from "@/components/ui/command";
 import { useApps } from "@/lib/queries";
 import { useNotes } from "@/lib/desk-queries";
-import { PILLARS, PILLAR_META } from "@/lib/pillars";
+import { iconFor } from "@/lib/pillars";
+import { usePillars } from "@/lib/pillar-queries";
 
 export function CommandBar({
   open,
@@ -24,6 +25,7 @@ export function CommandBar({
   const [search, setSearch] = useState("");
   const { data: notes } = useNotes();
   const { data: apps } = useApps();
+  const { data: pillars } = usePillars();
 
   useEffect(() => {
     if (!open) setSearch("");
@@ -57,16 +59,16 @@ export function CommandBar({
         </CommandGroup>
 
         <CommandGroup heading="Pillars">
-          {PILLARS.map((pillar) => {
-            const Icon = PILLAR_META[pillar].icon;
+          {(pillars ?? []).map((pillar) => {
+            const Icon = iconFor(pillar.icon);
             return (
               <CommandItem
-                key={pillar}
+                key={pillar.id}
                 onSelect={() =>
-                  go(() => navigate({ to: "/pillars/$pillar", params: { pillar } }))
+                  go(() => navigate({ to: "/pillars/$pillar", params: { pillar: pillar.slug } }))
                 }
               >
-                <Icon className="size-4" /> {PILLAR_META[pillar].label}
+                <Icon className="size-4" /> {pillar.label}
               </CommandItem>
             );
           })}
