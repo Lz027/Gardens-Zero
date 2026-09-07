@@ -36,7 +36,9 @@ function WorkspaceShell() {
   const [commandOpen, setCommandOpen] = useState(false);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { theme, setTheme } = useTheme();
   const { data: profile } = useProfile();
+
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
