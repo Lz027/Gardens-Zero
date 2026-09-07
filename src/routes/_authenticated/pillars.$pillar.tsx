@@ -1,30 +1,40 @@
-import { createFileRoute, notFound, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { MessageSquare, StickyNote } from "lucide-react";
+import { Info, MessageSquare, Settings2, StickyNote, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { usePillarEntries, useInvalidate, currentUserId } from "@/lib/queries";
 import { useCreateNote, useNotes, useUpdateNote } from "@/lib/desk-queries";
 import { useCreateThread, useThreads, useUpdateThread } from "@/lib/chat-queries";
+import {
+  usePillars,
+  useUpdatePillar,
+  useDeletePillar,
+  type PillarRow,
+} from "@/lib/pillar-queries";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PillarIconPicker } from "@/components/gardens/pillar-icon-picker";
 import {
-  PILLAR_META,
+  accentText,
+  iconFor,
   ENTRY_KINDS,
   ENTRY_KIND_LABEL,
-  isPillar,
+  STARTER_SLUGS,
   type EntryKind,
-  type Pillar,
 } from "@/lib/pillars";
 
 export const Route = createFileRoute("/_authenticated/pillars/$pillar")({
   head: () => ({
     meta: [
-      { title: "Pillar folder — Gardens Zero" },
-      { name: "description", content: "Notes and progress filed under one Gardens Zero pillar folder." },
-      { property: "og:title", content: "Pillar folder — Gardens Zero" },
+      { title: "Folder — Gardens Zero" },
+      {
+        name: "description",
+        content: "Notes, chats and progress filed under one Gardens Zero folder.",
+      },
+      { property: "og:title", content: "Folder — Gardens Zero" },
       {
         property: "og:description",
-        content: "Notes and progress filed under one Gardens Zero pillar folder.",
+        content: "Notes, chats and progress filed under one Gardens Zero folder.",
       },
     ],
   }),
@@ -33,27 +43,46 @@ export const Route = createFileRoute("/_authenticated/pillars/$pillar")({
 
 function PillarPage() {
   const { pillar } = Route.useParams();
-  if (!isPillar(pillar)) throw notFound();
-  return <PillarBody key={pillar} pillar={pillar} />;
+  const { data: pillars, isLoading } = usePillars();
+  const row = (pillars ?? []).find((p) => p.slug === pillar) ?? null;
+
+  if (isLoading) {
+    return <p className="px-6 py-10 text-sm text-muted-foreground">Opening folder…</p>;
+  }
+  if (!row) {
+    return (
+      <div className="mx-auto max-w-lg px-6 py-16 text-center">
+        <h1 className="text-xl font-semibold">This folder no longer exists</h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          It may have been renamed or removed. Pick another folder from the bar below.
+        </p>
+      </div>
+    );
+  }
+  return <PillarBody key={row.id} row={row} />;
 }
 
-function PillarBody({ pillar }: { pillar: Pillar }) {
-  const meta = PILLAR_META[pillar];
-  const Icon = meta.icon;
+function PillarBody({ row }: { row: PillarRow }) {
+  const Icon = iconFor(row.icon);
   const navigate = useNavigate();
-  const { data: entries } = usePillarEntries(pillar);
+  const { data: entries } = usePillarEntries(row.slug);
   const { data: notes } = useNotes();
   const { data: threads } = useThreads();
   const createThread = useCreateThread();
   const updateThread = useUpdateThread();
   const createNote = useCreateNote();
   const updateNote = useUpdateNote();
+  const updatePillar = useUpdatePillar();
+  const deletePillar = useDeletePillar();
   const invalidate = useInvalidate();
   const [kind, setKind] = useState<EntryKind>("done");
   const [content, setContent] = useState("");
+  const [editing, setEditing] = useState(false);
+  const [label, setLabel] = useState(row.label);
 
-  const filed = (notes ?? []).filter((n) => n.pillar === pillar);
-  const chats = (threads ?? []).filter((t) => t.pillar === pillar);
+  const filed = (notes ?? []).filter((n) => n.pillar === row.slug);
+  const chats = (threads ?? []).filter((t) => t.pillar === row.slug);
+  const premade = STARTER_SLUGS.includes(row.slug);
 
   async function addEntry() {
     const text = content.trim();
@@ -62,32 +91,79 @@ function PillarBody({ pillar }: { pillar: Pillar }) {
     if (!userId) return;
     await supabase
       .from("pillar_entries")
-      .insert({ user_id: userId, pillar, kind, content: text });
+      .insert({ user_id: userId, pillar: row.slug, kind, content: text });
     setContent("");
     invalidate(["pillar_entries"]);
   }
 
   async function newNoteHere() {
-    await createNote.mutateAsync({ pillar, title: `${meta.label} note` });
+    await createNote.mutateAsync({ pillar: row.slug, title: `${row.label} note` });
     navigate({ to: "/home" });
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-6 py-8">
-      <div className="flex items-start gap-3">
-        <span className="flex size-11 items-center justify-center rounded-xl border border-border bg-card">
-          <Icon className={meta.accent === "iris" ? "size-5 text-iris" : "size-5 text-teal"} />
+    <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6 sm:py-8">
+      <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-3">
+        <span className="grid size-11 shrink-0 place-items-center rounded-xl border border-border bg-card">
+          <Icon className={`size-5 ${accentText(row.accent)}`} />
         </span>
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-semibold tracking-tight">{meta.label}</h1>
-          </div>
-          <p className="mt-1 text-sm text-muted-foreground">{meta.blurb}</p>
+        <div className="min-w-0">
+          <h1 className="truncate text-xl font-semibold tracking-tight sm:text-2xl">{row.label}</h1>
+          <p className="mt-1 text-sm text-muted-foreground">{row.blurb}</p>
         </div>
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          aria-label="Customise this folder"
+          onClick={() => setEditing((v) => !v)}
+        >
+          <Settings2 className="size-4" />
+        </Button>
       </div>
 
+      {premade && !editing && (
+        <p className="mt-3 flex items-start gap-1.5 rounded-lg bg-muted/60 px-3 py-2 text-xs text-muted-foreground">
+          <Info className="mt-0.5 size-3.5 shrink-0" />
+          This folder came ready-made. Rename it, give it another icon, or delete it — and add your
+          own folders from the bar at the bottom.
+        </p>
+      )}
+
+      {editing && (
+        <div className="mt-4 space-y-3 rounded-xl border border-border bg-card p-3">
+          <Input
+            value={label}
+            onChange={(e) => setLabel(e.target.value)}
+            onBlur={() =>
+              label.trim() && label !== row.label
+                ? updatePillar.mutate({ id: row.id, label: label.trim() })
+                : undefined
+            }
+            aria-label="Folder name"
+            placeholder="Folder name"
+          />
+          <PillarIconPicker
+            icon={row.icon}
+            accent={row.accent}
+            onIcon={(icon) => updatePillar.mutate({ id: row.id, icon })}
+            onAccent={(accent) => updatePillar.mutate({ id: row.id, accent })}
+          />
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-destructive hover:text-destructive"
+            onClick={async () => {
+              await deletePillar.mutateAsync(row);
+              navigate({ to: "/home" });
+            }}
+          >
+            <Trash2 className="size-4" /> Delete this folder
+          </Button>
+        </div>
+      )}
+
       <section className="mt-8">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="text-[11px] uppercase tracking-widest text-muted-foreground">
             Notes in this folder ({filed.length})
           </h2>
@@ -98,11 +174,11 @@ function PillarBody({ pillar }: { pillar: Pillar }) {
         <ul className="mt-3 grid gap-2 sm:grid-cols-2">
           {filed.map((note) => (
             <li key={note.id} className="panel rounded-lg p-3">
-              <div className="text-sm font-medium">{note.title}</div>
-              <p className="mt-1 line-clamp-3 whitespace-pre-wrap text-xs text-muted-foreground">
+              <div className="truncate text-sm font-medium">{note.title}</div>
+              <p className="mt-1 line-clamp-3 whitespace-pre-wrap break-words text-xs text-muted-foreground">
                 {note.body || "Empty note"}
               </p>
-              <div className="mt-2 flex gap-2">
+              <div className="mt-2 flex flex-wrap gap-2">
                 <Button
                   size="sm"
                   variant="ghost"
@@ -125,14 +201,14 @@ function PillarBody({ pillar }: { pillar: Pillar }) {
           ))}
           {filed.length === 0 && (
             <li className="text-sm text-muted-foreground">
-              No notes filed here yet. Label a note with {meta.label} and it lands in this folder.
+              No notes filed here yet. Label a note with {row.label} and it lands in this folder.
             </li>
           )}
         </ul>
       </section>
 
       <section className="mt-8">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="text-[11px] uppercase tracking-widest text-muted-foreground">
             Chats in this folder ({chats.length})
           </h2>
@@ -140,7 +216,7 @@ function PillarBody({ pillar }: { pillar: Pillar }) {
             size="sm"
             variant="outline"
             onClick={async () => {
-              await createThread.mutateAsync({ pillar, title: `${meta.label} chat` });
+              await createThread.mutateAsync({ pillar: row.slug, title: `${row.label} chat` });
               navigate({ to: "/home" });
             }}
           >
@@ -162,9 +238,7 @@ function PillarBody({ pillar }: { pillar: Pillar }) {
             </li>
           ))}
           {chats.length === 0 && (
-            <li className="text-sm text-muted-foreground">
-              No chats filed here yet.
-            </li>
+            <li className="text-sm text-muted-foreground">No chats filed here yet.</li>
           )}
         </ul>
       </section>
@@ -175,6 +249,7 @@ function PillarBody({ pillar }: { pillar: Pillar }) {
           <select
             value={kind}
             onChange={(e) => setKind(e.target.value as EntryKind)}
+            aria-label="Kind of progress"
             className="h-9 rounded-md border border-input bg-card px-2 text-sm text-foreground"
           >
             {ENTRY_KINDS.map((option) => (
