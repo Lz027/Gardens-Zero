@@ -115,7 +115,12 @@ SUPABASE_PUBLISHABLE_KEY=your-supabase-publishable-key
 SUPABASE_SERVICE_ROLE_KEY=your-server-only-service-role-key
 ```
 
-The service-role key is server-only and must never be exposed to browser code. Configure the Supabase authentication redirect URLs and Google provider before testing OAuth. A new database can be initialized by running `supabase/gardens-zero-schema.sql` in the Supabase SQL editor.
+The service-role key is server-only and must never be exposed to browser code. Configure the authentication redirect URLs and Google provider before testing OAuth.
+
+### Deploying outside Lovable (Netlify)
+
+No environment variables are required. The backend URL and publishable key are baked into the build through `src/lib/backend-config.ts`, which environment variables override when they are present. `netlify.toml` already sets the build command, the `netlify` server preset, and the publish directory, so connecting the repository to Netlify and deploying is enough. Remember to add the deployed domain to the backend's allowed redirect URLs so sign-in works there.
+
 
 ## Development commands
 
