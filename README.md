@@ -1,72 +1,82 @@
-# Gardens Zero Workspace
+# Gardens Zero
 
-the logo should be a foggy etheral garden of iris flowers in magneta and turqoise,  i want to build a workspace called Gardens Zero, this workspace should be full customizable, so a sidebar to add apps (links with image logos similar to google crhome search bar,recent websites, and the main search bar can be used to earch anything in memory, the memory is the strongest main core, the workspace and the ai model should be adaptable and fully managable,, i will share with you the system i built and how to add the layers, you can add new chat normal and a have a well normal ai chat but the full workspace should be fully synced, storage yes and auth, no need for seo work as this site will be persornal, as for design it should feel like a smart OS and i prefer a calander and a notifaction system that is build in,, as for my system here is a breif explanintion: his is a system i build in perplexity but it is kinda annoying to not hold memory and the ai model can feel like it is acting with no context, Briefly: the system you built is a four-pillar personal operating system for rebuilding your life in a structured way. It keeps Systems as the coordination hub, while the other pillars handle their own domains so you can work on life, work, health, and future direction without everything collapsing into one messy chat. accessengineeringlibrary
-
-What the system is
-
-Your structure is meant to be practical, measurable, and bounded, not decorative. The idea is to keep a clear record of what matters, what changed, what is blocked, and what should carry forward, so each pillar stays useful instead of becoming clutter. accessengineeringlibrary
-
-The pillars
-
-From the context we’ve been using, the four pillars are:
-
-Systems: the main sync layer, rules, reset logic, structure, and cross-pillar memory.
-
-Career: earning direction, professional identity, credibility, and income path.
-
-Projects: execution, outputs, proof, assets, and build work.
-
-Academics: study direction, requirements, and long-term academic progress.
-
-How you articulate them
-
-You articulate the system by turning each pillar into a status narrative, not just a task list:
-
-what was done,
-
-what is in progress,
-
-what changed,
-
-what stayed the same,
-
-what is blocked,
-
-what comes next. cliwant
-
-That’s why your monthly sync idea works: it lets Systems collect the important signal from each pillar and convert it into a clean summary for the next phase. In practice, that means you’re not just “tracking work,” you’re building a memory layer for your life. cliwant
-
-Your plans in plain language
-
-Your plans are basically:
-
-keep the big cycle anchored to your yearly rhythm,
-
-let each pillar keep its own domain,
-
-use Systems to keep continuity and prevent drift,
-
-and make sure each pillar supports real-world outcomes, not fantasy. accessengineeringlibrary,, ,, design should be on top and comfortable to work with everyday, colors and approach like manus or preplexity black and white, but can add a few turqoise teal designs and magneta accents, theme can be iris garden with the same colors but not to heavy, the bg of chat and app should be foggy darker color of white, like ghost white foggy scrubs,, this app should be a workspace where i can log in and track my work and progress and manage my plans and be my go to ai assitant, only for me Letztenüll
-
-This project was built with [Lovable](https://lovable.dev).
+A personal workspace that feels like a small operating system: a notes desk with
+floating windows and widgets, a chat mode for quick thinking, customizable
+folders ("pillars"), a calendar, and an app dock — all private to one signed-in
+person.
 
 **Live app**: https://garden-of-zero.lovable.app
 
-## Build with Lovable
+## What's inside
 
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/be169c4b-b4bc-472b-a1e7-cbed6a835d0a).
+| Area | What it does |
+| --- | --- |
+| Desk (`/home`, desk mode) | Draggable, resizable note windows, desktop folders, recycle bin, right-click to place a note or folder, background picker, addable widgets |
+| Chat mode (`/home`, chat mode) | WhatsApp-style saved conversations with date separators, rename, delete, pillar filing. Default on phones |
+| Widgets | Calendar, clock, up-next agenda and shortcuts cards; drag to place, positions kept in the browser |
+| Folders (`/pillars/$pillar`) | Customizable named folders with a pick-your-icon set and accent colour. Four starters are seeded and can be renamed or deleted |
+| Calendar (`/calendar`) | Month grid with event chips, day panel to add and remove events |
+| Settings (`/settings`) | Profile, theme, folder management |
+| Auth (`/auth`) | Email and Google sign-in; everything behind `/_authenticated` |
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+Light theme is the default with a dark toggle; the choice is stored per person.
+The app is installable as a PWA (manifest plus 192/512/1024 and maskable icons).
 
-## Development
+## Tech
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+- TanStack Start v1 (React 19, file-based routing in `src/routes`), Vite 7
+- Tailwind CSS v4 via `src/styles.css`, shadcn/ui components
+- TanStack Query for all reads and writes
+- Supabase for database, auth and storage, with row-level security per user
+
+## Project layout
+
+```
+src/
+  routes/                 file-based routes (__root, index, auth, _authenticated/*)
+  components/gardens/     desk, widgets, chat, dock, taskbar, calendar grid, logo
+  components/ui/          shadcn primitives
+  lib/                    queries (desk, chat, pillars, events), theme, wallpaper, utils
+  integrations/supabase/  generated client and types
+supabase/
+  gardens-zero-schema.sql full schema: tables, grants, RLS policies, seeds
+```
+
+## Backend configuration (environment only)
+
+No keys are hardcoded. The client reads:
+
+```
+VITE_SUPABASE_URL=...
+VITE_SUPABASE_PUBLISHABLE_KEY=...
+VITE_SUPABASE_PROJECT_ID=...
+```
+
+To deploy outside Lovable (e.g. Netlify):
+
+1. Set those three variables in the host's environment settings.
+2. Build command `npm run build`, then serve the produced output.
+3. In the Supabase project, set the site URL to your deployed domain and add it
+   to the redirect allow-list, then enable Email and Google providers.
+4. If you are starting a fresh database, run `supabase/gardens-zero-schema.sql`
+   in the SQL editor — it is re-runnable and seeds the starter folders.
+
+## Local development
 
 ```sh
-git clone <this-repository-url>
-cd <repository-name>
 npm i
-npm run dev
+npm run dev     # http://localhost:8080
 ```
+
+## Data model (summary)
+
+- `profiles` — display name, bio, links, wallpaper, theme
+- `pillars` — user-owned folders: slug, label, blurb, icon, accent, sort order
+- `notes`, `note_folders` — desk notes with position, size, open/minimized state,
+  soft delete via `deleted_at`
+- `threads`, `messages` — chat conversations and their bubbles
+- `pillar_entries` — status log entries per folder
+- `events` — calendar items
+- `apps`, `recents`, `notifications`, `settings` — dock links, history, alerts
+
+Every table is row-level-secured to `auth.uid()` and granted to `authenticated`.

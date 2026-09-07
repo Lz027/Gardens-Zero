@@ -4,6 +4,8 @@ import { StickyNote, Plus, MessageSquare, LayoutDashboard, FolderPlus } from "lu
 import { useCreateNote, useCreateNoteFolder, useNotes, useUpdateNote } from "@/lib/desk-queries";
 import { NoteWindow } from "@/components/gardens/note-window";
 import { DesktopItems, NotepadGlyph } from "@/components/gardens/desktop-items";
+import { DeskWidgets } from "@/components/gardens/desk-widgets";
+
 import { ChatMode } from "@/components/gardens/chat-mode";
 import { WallpaperPicker } from "@/components/gardens/wallpaper-picker";
 import { Button } from "@/components/ui/button";
@@ -137,6 +139,8 @@ function Desk() {
         }}
       >
         <DesktopItems bounds={canvas} />
+        <DeskWidgets bounds={canvas} onNewNote={() => newNote()} />
+
 
         {menu && (
           <div
