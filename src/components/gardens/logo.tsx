@@ -1,4 +1,4 @@
-import logo from "@/assets/iris-mark.png";
+import logo from "@/assets/iris-icon-rounded.png";
 import { cn } from "@/lib/utils";
 
 export function GardensLogo({ className }: { className?: string }) {
@@ -6,8 +6,8 @@ export function GardensLogo({ className }: { className?: string }) {
     <img
       src={logo}
       alt="Gardens Zero iris mark"
-      width={816}
-      height={816}
+      width={512}
+      height={512}
       className={cn("object-contain", className)}
     />
   );
