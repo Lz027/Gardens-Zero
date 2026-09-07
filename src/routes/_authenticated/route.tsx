@@ -1,6 +1,6 @@
 import { createFileRoute, Outlet, Link, redirect, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { CalendarDays, Command, LayoutDashboard, LogOut, Moon, Settings as SettingsIcon, Sun } from "lucide-react";
+import { CalendarDays, LayoutDashboard, LogOut, Moon, Search, Settings as SettingsIcon, Sun } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { AppDock } from "@/components/gardens/app-dock";
@@ -86,10 +86,11 @@ function WorkspaceShell() {
           <button
             type="button"
             onClick={() => setCommandOpen(true)}
-            className="ml-auto flex h-8 min-w-0 items-center gap-2 rounded-lg border border-border bg-card/60 px-3 text-xs text-muted-foreground transition-colors hover:text-foreground sm:w-72"
+            aria-label="Search notes and apps"
+            className="ml-auto flex size-8 shrink-0 items-center justify-center rounded-lg border border-border bg-card/60 text-xs text-muted-foreground transition-colors hover:text-foreground sm:w-72 sm:justify-start sm:gap-2 sm:px-3"
           >
-            <Command className="size-3.5" />
-            <span className="truncate">Search notes and apps</span>
+            <Search className="size-4 shrink-0" />
+            <span className="hidden truncate sm:block">Search notes and apps</span>
             <kbd className="ml-auto hidden rounded border border-border px-1 font-mono text-[10px] sm:block">
               ⌘K
             </kbd>

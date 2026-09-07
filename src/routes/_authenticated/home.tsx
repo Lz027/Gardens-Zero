@@ -53,7 +53,7 @@ function Workspace() {
 
   return (
     <div className="flex h-full min-h-0 flex-col">
-      <div className="flex items-center gap-2 border-b border-border px-3 py-2">
+      <div className="hidden items-center gap-2 border-b border-border px-3 py-2 md:flex">
         <div className="hidden items-center gap-1 rounded-full border border-border p-0.5 md:flex">
           {(
             [
@@ -77,7 +77,7 @@ function Workspace() {
             </button>
           ))}
         </div>
-        <span className="text-xs text-muted-foreground md:hidden">Chat notes</span>
+        
       </div>
 
       <div className="min-h-0 flex-1">{effective === "chat" ? <ChatMode /> : <Desk />}</div>
