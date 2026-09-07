@@ -1,7 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
-import type { Pillar } from "@/lib/pillars";
 
 export type Thread = Database["public"]["Tables"]["threads"]["Row"];
 export type Message = Database["public"]["Tables"]["messages"]["Row"];
@@ -47,7 +46,7 @@ export function useMessages(threadId: string | null) {
 export function useCreateThread() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (input: { title?: string; pillar?: Pillar | null } = {}) => {
+    mutationFn: async (input: { title?: string; pillar?: string | null } = {}) => {
       const user_id = await userId();
       const rows = await unwrap<Thread[]>(
         supabase
