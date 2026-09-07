@@ -74,7 +74,7 @@ export type Database = {
           description: string | null
           ends_at: string | null
           id: string
-          pillar: Database["public"]["Enums"]["pillar"] | null
+          pillar: string | null
           starts_at: string
           title: string
           user_id: string
@@ -85,7 +85,7 @@ export type Database = {
           description?: string | null
           ends_at?: string | null
           id?: string
-          pillar?: Database["public"]["Enums"]["pillar"] | null
+          pillar?: string | null
           starts_at: string
           title: string
           user_id: string
@@ -96,7 +96,7 @@ export type Database = {
           description?: string | null
           ends_at?: string | null
           id?: string
-          pillar?: Database["public"]["Enums"]["pillar"] | null
+          pillar?: string | null
           starts_at?: string
           title?: string
           user_id?: string
@@ -232,7 +232,7 @@ export type Database = {
           is_maximized: boolean
           is_minimized: boolean
           is_open: boolean
-          pillar: Database["public"]["Enums"]["pillar"] | null
+          pillar: string | null
           pillar_id: string | null
           pinned: boolean
           pos_x: number
@@ -253,7 +253,7 @@ export type Database = {
           is_maximized?: boolean
           is_minimized?: boolean
           is_open?: boolean
-          pillar?: Database["public"]["Enums"]["pillar"] | null
+          pillar?: string | null
           pillar_id?: string | null
           pinned?: boolean
           pos_x?: number
@@ -274,7 +274,7 @@ export type Database = {
           is_maximized?: boolean
           is_minimized?: boolean
           is_open?: boolean
-          pillar?: Database["public"]["Enums"]["pillar"] | null
+          pillar?: string | null
           pillar_id?: string | null
           pinned?: boolean
           pos_x?: number
@@ -338,7 +338,7 @@ export type Database = {
           created_at: string
           id: string
           kind: Database["public"]["Enums"]["entry_kind"]
-          pillar: Database["public"]["Enums"]["pillar"]
+          pillar: string
           updated_at: string
           user_id: string
         }
@@ -347,7 +347,7 @@ export type Database = {
           created_at?: string
           id?: string
           kind?: Database["public"]["Enums"]["entry_kind"]
-          pillar: Database["public"]["Enums"]["pillar"]
+          pillar: string
           updated_at?: string
           user_id: string
         }
@@ -356,7 +356,7 @@ export type Database = {
           created_at?: string
           id?: string
           kind?: Database["public"]["Enums"]["entry_kind"]
-          pillar?: Database["public"]["Enums"]["pillar"]
+          pillar?: string
           updated_at?: string
           user_id?: string
         }
@@ -534,7 +534,7 @@ export type Database = {
         Row: {
           created_at: string
           id: string
-          pillar: Database["public"]["Enums"]["pillar"] | null
+          pillar: string | null
           title: string
           updated_at: string
           user_id: string
@@ -542,7 +542,7 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: string
-          pillar?: Database["public"]["Enums"]["pillar"] | null
+          pillar?: string | null
           title?: string
           updated_at?: string
           user_id: string
@@ -550,7 +550,7 @@ export type Database = {
         Update: {
           created_at?: string
           id?: string
-          pillar?: Database["public"]["Enums"]["pillar"] | null
+          pillar?: string | null
           title?: string
           updated_at?: string
           user_id?: string
