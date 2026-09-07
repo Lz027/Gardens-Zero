@@ -242,7 +242,7 @@ function Conversation({ thread, onBack }: { thread: Thread; onBack: () => void }
             })
           }
           aria-label="File this chat under a pillar"
-          className="h-8 rounded-md border border-input bg-card px-2 text-xs text-foreground"
+          className="h-8 w-20 shrink-0 truncate rounded-md border border-input bg-card px-1.5 text-xs text-foreground sm:w-auto sm:px-2"
         >
           <option value="">No pillar</option>
           {(convPillars ?? []).map((p) => (
@@ -291,7 +291,7 @@ function Conversation({ thread, onBack }: { thread: Thread; onBack: () => void }
                   type="button"
                   onClick={() => removeMessage.mutate({ id: message.id, threadId: thread.id })}
                   aria-label="Delete message"
-                  className="rounded-full p-1 text-muted-foreground opacity-0 transition-opacity hover:text-destructive focus-visible:opacity-100 group-hover:opacity-100"
+                  className="rounded-full p-1 text-muted-foreground opacity-40 transition-opacity hover:text-destructive focus-visible:opacity-100 md:opacity-0 md:group-hover:opacity-100"
                 >
                   <X className="size-3.5" />
                 </button>
