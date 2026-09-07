@@ -53,6 +53,51 @@ export function AppDock() {
   const [selected, setSelected] = useState<string[]>([]);
   const [dragId, setDragId] = useState<string | null>(null);
   const [dropId, setDropId] = useState<string | null>(null);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  // Swipe right from the left screen edge to reveal the dock on phones.
+  useEffect(() => {
+    let startX = 0;
+    let startY = 0;
+    let tracking = false;
+    const onStart = (e: TouchEvent) => {
+      const t = e.touches[0];
+      if (!t) return;
+      startX = t.clientX;
+      startY = t.clientY;
+      tracking = startX < 28 || mobileOpen;
+    };
+    const onMove = (e: TouchEvent) => {
+      if (!tracking) return;
+      const t = e.touches[0];
+      if (!t) return;
+      const dx = t.clientX - startX;
+      const dy = Math.abs(t.clientY - startY);
+      if (dy > 50) {
+        tracking = false;
+        return;
+      }
+      if (dx > 60) {
+        setMobileOpen(true);
+        tracking = false;
+      } else if (dx < -60) {
+        setMobileOpen(false);
+        tracking = false;
+      }
+    };
+    window.addEventListener("touchstart", onStart, { passive: true });
+    window.addEventListener("touchmove", onMove, { passive: true });
+    return () => {
+      window.removeEventListener("touchstart", onStart);
+      window.removeEventListener("touchmove", onMove);
+    };
+  }, [mobileOpen]);
+
+  // Close the drawer after navigating on phones.
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
+
 
   const createApp = useCreateApp();
   const updateApp = useUpdateApp();
