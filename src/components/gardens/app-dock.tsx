@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { toast } from "sonner";
 import {
@@ -53,6 +53,51 @@ export function AppDock() {
   const [selected, setSelected] = useState<string[]>([]);
   const [dragId, setDragId] = useState<string | null>(null);
   const [dropId, setDropId] = useState<string | null>(null);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  // Swipe right from the left screen edge to reveal the dock on phones.
+  useEffect(() => {
+    let startX = 0;
+    let startY = 0;
+    let tracking = false;
+    const onStart = (e: TouchEvent) => {
+      const t = e.touches[0];
+      if (!t) return;
+      startX = t.clientX;
+      startY = t.clientY;
+      tracking = startX < 28 || mobileOpen;
+    };
+    const onMove = (e: TouchEvent) => {
+      if (!tracking) return;
+      const t = e.touches[0];
+      if (!t) return;
+      const dx = t.clientX - startX;
+      const dy = Math.abs(t.clientY - startY);
+      if (dy > 50) {
+        tracking = false;
+        return;
+      }
+      if (dx > 60) {
+        setMobileOpen(true);
+        tracking = false;
+      } else if (dx < -60) {
+        setMobileOpen(false);
+        tracking = false;
+      }
+    };
+    window.addEventListener("touchstart", onStart, { passive: true });
+    window.addEventListener("touchmove", onMove, { passive: true });
+    return () => {
+      window.removeEventListener("touchstart", onStart);
+      window.removeEventListener("touchmove", onMove);
+    };
+  }, [mobileOpen]);
+
+  // Close the drawer after navigating on phones.
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
+
 
   const createApp = useCreateApp();
   const updateApp = useUpdateApp();
@@ -95,26 +140,39 @@ export function AppDock() {
     await updateApp.mutateAsync({ id: source.id, parent_id: folder.id });
   }
 
-  if (mode === "hidden") {
-    return (
-      <button
-        type="button"
-        onClick={() => setMode("normal")}
-        aria-label="Show app dock"
-        className="fixed left-0 top-1/2 z-40 hidden -translate-y-1/2 rounded-r-xl border border-l-0 border-sidebar-border/70 bg-sidebar/90 px-1.5 py-4 text-muted-foreground backdrop-blur transition-colors hover:text-foreground md:block"
-      >
-        <PanelLeftOpen className="size-4" />
-      </button>
-    );
-  }
+  const desktopHidden = mode === "hidden";
 
   return (
+    <>
+      {desktopHidden && (
+        <button
+          type="button"
+          onClick={() => setMode("normal")}
+          aria-label="Show app dock"
+          className="fixed left-0 top-1/2 z-40 hidden -translate-y-1/2 rounded-r-xl border border-l-0 border-sidebar-border/70 bg-sidebar/90 px-1.5 py-4 text-muted-foreground backdrop-blur transition-colors hover:text-foreground md:block"
+        >
+          <PanelLeftOpen className="size-4" />
+        </button>
+      )}
+
+      {mobileOpen && (
+        <button
+          type="button"
+          aria-label="Close app dock"
+          onClick={() => setMobileOpen(false)}
+          className="fixed inset-0 z-40 bg-foreground/25 backdrop-blur-[1px] md:hidden"
+        />
+      )}
+
     <aside
       className={cn(
-        "hidden shrink-0 flex-col border-r border-sidebar-border/70 bg-sidebar transition-[width] duration-300 md:flex",
-        expanded ? "w-[26rem]" : "w-[8.5rem]",
+        "fixed inset-y-0 left-0 z-50 flex w-56 shrink-0 flex-col border-r border-sidebar-border/70 bg-sidebar transition-transform duration-300 md:static md:z-auto md:w-auto md:translate-x-0 md:transition-[width]",
+        mobileOpen ? "translate-x-0" : "-translate-x-full",
+        desktopHidden ? "md:hidden" : "md:flex",
+        expanded ? "md:w-[26rem]" : "md:w-[8.5rem]",
       )}
     >
+
       <div className="flex items-center justify-between px-4 py-4">
         <Link to="/home">
           <GardensWordmark compact={!expanded} />
@@ -208,7 +266,9 @@ export function AppDock() {
         </Link>
       </div>
     </aside>
+    </>
   );
+
 }
 
 function DockIcon({ app, className }: { app: AppItem; className?: string }) {

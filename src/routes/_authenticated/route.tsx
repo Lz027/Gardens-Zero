@@ -1,15 +1,18 @@
 import { createFileRoute, Outlet, Link, redirect, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { CalendarDays, Command, LayoutDashboard, LogOut, Settings as SettingsIcon } from "lucide-react";
+import { CalendarDays, Command, LayoutDashboard, LogOut, Moon, Settings as SettingsIcon, Sun } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { AppDock } from "@/components/gardens/app-dock";
 import { PillarTaskbar } from "@/components/gardens/pillar-taskbar";
 import { RightRail } from "@/components/gardens/right-rail";
 import { CommandBar } from "@/components/gardens/command-bar";
+import { GuideDialog } from "@/components/gardens/guide-dialog";
 import { GardensWordmark } from "@/components/gardens/logo";
 import { Button } from "@/components/ui/button";
+import { useTheme } from "@/lib/theme";
 import { useProfile } from "@/lib/queries";
+
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
@@ -33,7 +36,9 @@ function WorkspaceShell() {
   const [commandOpen, setCommandOpen] = useState(false);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { theme, setTheme } = useTheme();
   const { data: profile } = useProfile();
+
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -59,9 +64,10 @@ function WorkspaceShell() {
 
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex h-14 shrink-0 items-center gap-3 border-b border-border px-4">
-          <div className="md:hidden">
+          <Link to="/home" className="md:hidden" aria-label="Go to the desk">
             <GardensWordmark />
-          </div>
+          </Link>
+
 
           <nav className="hidden items-center gap-1 md:flex">
             {NAV.map((item) => (
@@ -89,14 +95,24 @@ function WorkspaceShell() {
             </kbd>
           </button>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
             <span className="hidden text-xs text-muted-foreground sm:block">
               {profile?.display_name ?? profile?.email ?? ""}
             </span>
+            <GuideDialog />
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+            >
+              {theme === "dark" ? <Sun className="size-4" /> : <Moon className="size-4" />}
+            </Button>
             <Button variant="ghost" size="icon-sm" onClick={signOut} aria-label="Sign out">
               <LogOut className="size-4" />
             </Button>
           </div>
+
         </header>
 
         <div className="flex min-h-0 flex-1">
