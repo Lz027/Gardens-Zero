@@ -1,15 +1,18 @@
 import { createFileRoute, Outlet, Link, redirect, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { CalendarDays, Command, LayoutDashboard, LogOut, Settings as SettingsIcon } from "lucide-react";
+import { CalendarDays, Command, LayoutDashboard, LogOut, Moon, Settings as SettingsIcon, Sun } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { AppDock } from "@/components/gardens/app-dock";
 import { PillarTaskbar } from "@/components/gardens/pillar-taskbar";
 import { RightRail } from "@/components/gardens/right-rail";
 import { CommandBar } from "@/components/gardens/command-bar";
+import { GuideDialog } from "@/components/gardens/guide-dialog";
 import { GardensWordmark } from "@/components/gardens/logo";
 import { Button } from "@/components/ui/button";
+import { useTheme } from "@/lib/theme";
 import { useProfile } from "@/lib/queries";
+
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
