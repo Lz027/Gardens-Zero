@@ -1,691 +1,729 @@
-export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[]
 
 export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.5";
-  };
+    PostgrestVersion: "14.5"
+  }
   public: {
     Tables: {
       apps: {
         Row: {
-          accent: string | null;
-          created_at: string;
-          icon_url: string | null;
-          id: string;
-          is_favorite: boolean;
-          is_folder: boolean;
-          name: string;
-          parent_id: string | null;
-          position: number;
-          share_count: number;
-          url: string;
-          user_id: string;
-        };
+          accent: string | null
+          created_at: string
+          icon_url: string | null
+          id: string
+          is_favorite: boolean
+          is_folder: boolean
+          name: string
+          parent_id: string | null
+          position: number
+          share_count: number
+          url: string
+          user_id: string
+        }
         Insert: {
-          accent?: string | null;
-          created_at?: string;
-          icon_url?: string | null;
-          id?: string;
-          is_favorite?: boolean;
-          is_folder?: boolean;
-          name: string;
-          parent_id?: string | null;
-          position?: number;
-          share_count?: number;
-          url?: string;
-          user_id: string;
-        };
+          accent?: string | null
+          created_at?: string
+          icon_url?: string | null
+          id?: string
+          is_favorite?: boolean
+          is_folder?: boolean
+          name: string
+          parent_id?: string | null
+          position?: number
+          share_count?: number
+          url?: string
+          user_id: string
+        }
         Update: {
-          accent?: string | null;
-          created_at?: string;
-          icon_url?: string | null;
-          id?: string;
-          is_favorite?: boolean;
-          is_folder?: boolean;
-          name?: string;
-          parent_id?: string | null;
-          position?: number;
-          share_count?: number;
-          url?: string;
-          user_id?: string;
-        };
+          accent?: string | null
+          created_at?: string
+          icon_url?: string | null
+          id?: string
+          is_favorite?: boolean
+          is_folder?: boolean
+          name?: string
+          parent_id?: string | null
+          position?: number
+          share_count?: number
+          url?: string
+          user_id?: string
+        }
         Relationships: [
           {
-            foreignKeyName: "apps_parent_id_fkey";
-            columns: ["parent_id"];
-            isOneToOne: false;
-            referencedRelation: "apps";
-            referencedColumns: ["id"];
+            foreignKeyName: "apps_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "apps"
+            referencedColumns: ["id"]
           },
-        ];
-      };
+        ]
+      }
       events: {
         Row: {
-          all_day: boolean;
-          created_at: string;
-          description: string | null;
-          ends_at: string | null;
-          id: string;
-          pillar: string | null;
-          starts_at: string;
-          title: string;
-          user_id: string;
-        };
+          all_day: boolean
+          created_at: string
+          description: string | null
+          ends_at: string | null
+          id: string
+          pillar: string | null
+          starts_at: string
+          title: string
+          user_id: string
+        }
         Insert: {
-          all_day?: boolean;
-          created_at?: string;
-          description?: string | null;
-          ends_at?: string | null;
-          id?: string;
-          pillar?: string | null;
-          starts_at: string;
-          title: string;
-          user_id: string;
-        };
+          all_day?: boolean
+          created_at?: string
+          description?: string | null
+          ends_at?: string | null
+          id?: string
+          pillar?: string | null
+          starts_at: string
+          title: string
+          user_id: string
+        }
         Update: {
-          all_day?: boolean;
-          created_at?: string;
-          description?: string | null;
-          ends_at?: string | null;
-          id?: string;
-          pillar?: string | null;
-          starts_at?: string;
-          title?: string;
-          user_id?: string;
-        };
-        Relationships: [];
-      };
+          all_day?: boolean
+          created_at?: string
+          description?: string | null
+          ends_at?: string | null
+          id?: string
+          pillar?: string | null
+          starts_at?: string
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       memory_entries: {
         Row: {
-          content: string;
-          created_at: string;
-          id: string;
-          pillar: Database["public"]["Enums"]["pillar"] | null;
-          pinned: boolean;
-          source_thread_id: string | null;
-          tags: string[];
-          title: string;
-          type: Database["public"]["Enums"]["memory_type"];
-          updated_at: string;
-          user_id: string;
-        };
+          content: string
+          created_at: string
+          id: string
+          pillar: Database["public"]["Enums"]["pillar"] | null
+          pinned: boolean
+          source_thread_id: string | null
+          tags: string[]
+          title: string
+          type: Database["public"]["Enums"]["memory_type"]
+          updated_at: string
+          user_id: string
+        }
         Insert: {
-          content: string;
-          created_at?: string;
-          id?: string;
-          pillar?: Database["public"]["Enums"]["pillar"] | null;
-          pinned?: boolean;
-          source_thread_id?: string | null;
-          tags?: string[];
-          title: string;
-          type?: Database["public"]["Enums"]["memory_type"];
-          updated_at?: string;
-          user_id: string;
-        };
+          content: string
+          created_at?: string
+          id?: string
+          pillar?: Database["public"]["Enums"]["pillar"] | null
+          pinned?: boolean
+          source_thread_id?: string | null
+          tags?: string[]
+          title: string
+          type?: Database["public"]["Enums"]["memory_type"]
+          updated_at?: string
+          user_id: string
+        }
         Update: {
-          content?: string;
-          created_at?: string;
-          id?: string;
-          pillar?: Database["public"]["Enums"]["pillar"] | null;
-          pinned?: boolean;
-          source_thread_id?: string | null;
-          tags?: string[];
-          title?: string;
-          type?: Database["public"]["Enums"]["memory_type"];
-          updated_at?: string;
-          user_id?: string;
-        };
+          content?: string
+          created_at?: string
+          id?: string
+          pillar?: Database["public"]["Enums"]["pillar"] | null
+          pinned?: boolean
+          source_thread_id?: string | null
+          tags?: string[]
+          title?: string
+          type?: Database["public"]["Enums"]["memory_type"]
+          updated_at?: string
+          user_id?: string
+        }
         Relationships: [
           {
-            foreignKeyName: "memory_entries_source_thread_id_fkey";
-            columns: ["source_thread_id"];
-            isOneToOne: false;
-            referencedRelation: "threads";
-            referencedColumns: ["id"];
+            foreignKeyName: "memory_entries_source_thread_id_fkey"
+            columns: ["source_thread_id"]
+            isOneToOne: false
+            referencedRelation: "threads"
+            referencedColumns: ["id"]
           },
-        ];
-      };
+        ]
+      }
       messages: {
         Row: {
-          client_id: string | null;
-          created_at: string;
-          id: string;
-          parts: Json;
-          role: string;
-          text_content: string;
-          thread_id: string;
-          user_id: string;
-        };
+          client_id: string | null
+          created_at: string
+          id: string
+          parts: Json
+          role: string
+          text_content: string
+          thread_id: string
+          user_id: string
+        }
         Insert: {
-          client_id?: string | null;
-          created_at?: string;
-          id?: string;
-          parts?: Json;
-          role: string;
-          text_content?: string;
-          thread_id: string;
-          user_id: string;
-        };
+          client_id?: string | null
+          created_at?: string
+          id?: string
+          parts?: Json
+          role: string
+          text_content?: string
+          thread_id: string
+          user_id: string
+        }
         Update: {
-          client_id?: string | null;
-          created_at?: string;
-          id?: string;
-          parts?: Json;
-          role?: string;
-          text_content?: string;
-          thread_id?: string;
-          user_id?: string;
-        };
+          client_id?: string | null
+          created_at?: string
+          id?: string
+          parts?: Json
+          role?: string
+          text_content?: string
+          thread_id?: string
+          user_id?: string
+        }
         Relationships: [
           {
-            foreignKeyName: "messages_thread_id_fkey";
-            columns: ["thread_id"];
-            isOneToOne: false;
-            referencedRelation: "threads";
-            referencedColumns: ["id"];
+            foreignKeyName: "messages_thread_id_fkey"
+            columns: ["thread_id"]
+            isOneToOne: false
+            referencedRelation: "threads"
+            referencedColumns: ["id"]
           },
-        ];
-      };
+        ]
+      }
       note_folders: {
         Row: {
-          created_at: string;
-          id: string;
-          name: string;
-          pos_x: number;
-          pos_y: number;
-          user_id: string;
-        };
+          created_at: string
+          id: string
+          name: string
+          pos_x: number
+          pos_y: number
+          user_id: string
+        }
         Insert: {
-          created_at?: string;
-          id?: string;
-          name?: string;
-          pos_x?: number;
-          pos_y?: number;
-          user_id: string;
-        };
+          created_at?: string
+          id?: string
+          name?: string
+          pos_x?: number
+          pos_y?: number
+          user_id: string
+        }
         Update: {
-          created_at?: string;
-          id?: string;
-          name?: string;
-          pos_x?: number;
-          pos_y?: number;
-          user_id?: string;
-        };
-        Relationships: [];
-      };
+          created_at?: string
+          id?: string
+          name?: string
+          pos_x?: number
+          pos_y?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       notes: {
         Row: {
-          body: string;
-          created_at: string;
-          deleted_at: string | null;
-          folder_id: string | null;
-          height: number;
-          id: string;
-          is_maximized: boolean;
-          is_minimized: boolean;
-          is_open: boolean;
-          pillar: string | null;
-          pillar_id: string | null;
-          pinned: boolean;
-          pos_x: number;
-          pos_y: number;
-          title: string;
-          updated_at: string;
-          user_id: string;
-          width: number;
-          z_index: number;
-        };
+          body: string
+          created_at: string
+          deleted_at: string | null
+          folder_id: string | null
+          height: number
+          id: string
+          is_maximized: boolean
+          is_minimized: boolean
+          is_open: boolean
+          pillar: string | null
+          pillar_id: string | null
+          pinned: boolean
+          pos_x: number
+          pos_y: number
+          title: string
+          updated_at: string
+          user_id: string
+          width: number
+          z_index: number
+        }
         Insert: {
-          body?: string;
-          created_at?: string;
-          deleted_at?: string | null;
-          folder_id?: string | null;
-          height?: number;
-          id?: string;
-          is_maximized?: boolean;
-          is_minimized?: boolean;
-          is_open?: boolean;
-          pillar?: string | null;
-          pillar_id?: string | null;
-          pinned?: boolean;
-          pos_x?: number;
-          pos_y?: number;
-          title?: string;
-          updated_at?: string;
-          user_id: string;
-          width?: number;
-          z_index?: number;
-        };
+          body?: string
+          created_at?: string
+          deleted_at?: string | null
+          folder_id?: string | null
+          height?: number
+          id?: string
+          is_maximized?: boolean
+          is_minimized?: boolean
+          is_open?: boolean
+          pillar?: string | null
+          pillar_id?: string | null
+          pinned?: boolean
+          pos_x?: number
+          pos_y?: number
+          title?: string
+          updated_at?: string
+          user_id: string
+          width?: number
+          z_index?: number
+        }
         Update: {
-          body?: string;
-          created_at?: string;
-          deleted_at?: string | null;
-          folder_id?: string | null;
-          height?: number;
-          id?: string;
-          is_maximized?: boolean;
-          is_minimized?: boolean;
-          is_open?: boolean;
-          pillar?: string | null;
-          pillar_id?: string | null;
-          pinned?: boolean;
-          pos_x?: number;
-          pos_y?: number;
-          title?: string;
-          updated_at?: string;
-          user_id?: string;
-          width?: number;
-          z_index?: number;
-        };
+          body?: string
+          created_at?: string
+          deleted_at?: string | null
+          folder_id?: string | null
+          height?: number
+          id?: string
+          is_maximized?: boolean
+          is_minimized?: boolean
+          is_open?: boolean
+          pillar?: string | null
+          pillar_id?: string | null
+          pinned?: boolean
+          pos_x?: number
+          pos_y?: number
+          title?: string
+          updated_at?: string
+          user_id?: string
+          width?: number
+          z_index?: number
+        }
         Relationships: [
           {
-            foreignKeyName: "notes_folder_id_fkey";
-            columns: ["folder_id"];
-            isOneToOne: false;
-            referencedRelation: "note_folders";
-            referencedColumns: ["id"];
+            foreignKeyName: "notes_folder_id_fkey"
+            columns: ["folder_id"]
+            isOneToOne: false
+            referencedRelation: "note_folders"
+            referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "notes_pillar_id_fkey";
-            columns: ["pillar_id"];
-            isOneToOne: false;
-            referencedRelation: "pillars";
-            referencedColumns: ["id"];
+            foreignKeyName: "notes_pillar_id_fkey"
+            columns: ["pillar_id"]
+            isOneToOne: false
+            referencedRelation: "pillars"
+            referencedColumns: ["id"]
           },
-        ];
-      };
+        ]
+      }
       notifications: {
         Row: {
-          body: string | null;
-          created_at: string;
-          id: string;
-          kind: string;
-          read: boolean;
-          title: string;
-          user_id: string;
-        };
+          body: string | null
+          created_at: string
+          id: string
+          kind: string
+          read: boolean
+          title: string
+          user_id: string
+        }
         Insert: {
-          body?: string | null;
-          created_at?: string;
-          id?: string;
-          kind?: string;
-          read?: boolean;
-          title: string;
-          user_id: string;
-        };
+          body?: string | null
+          created_at?: string
+          id?: string
+          kind?: string
+          read?: boolean
+          title: string
+          user_id: string
+        }
         Update: {
-          body?: string | null;
-          created_at?: string;
-          id?: string;
-          kind?: string;
-          read?: boolean;
-          title?: string;
-          user_id?: string;
-        };
-        Relationships: [];
-      };
+          body?: string | null
+          created_at?: string
+          id?: string
+          kind?: string
+          read?: boolean
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       pillar_entries: {
         Row: {
-          content: string;
-          created_at: string;
-          id: string;
-          kind: Database["public"]["Enums"]["entry_kind"];
-          pillar: string;
-          updated_at: string;
-          user_id: string;
-        };
+          content: string
+          created_at: string
+          id: string
+          kind: Database["public"]["Enums"]["entry_kind"]
+          pillar: string
+          updated_at: string
+          user_id: string
+        }
         Insert: {
-          content: string;
-          created_at?: string;
-          id?: string;
-          kind?: Database["public"]["Enums"]["entry_kind"];
-          pillar: string;
-          updated_at?: string;
-          user_id: string;
-        };
+          content: string
+          created_at?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["entry_kind"]
+          pillar: string
+          updated_at?: string
+          user_id: string
+        }
         Update: {
-          content?: string;
-          created_at?: string;
-          id?: string;
-          kind?: Database["public"]["Enums"]["entry_kind"];
-          pillar?: string;
-          updated_at?: string;
-          user_id?: string;
-        };
-        Relationships: [];
-      };
+          content?: string
+          created_at?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["entry_kind"]
+          pillar?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       pillar_snapshots: {
         Row: {
-          created_at: string;
-          id: string;
-          period: string;
-          pillar: Database["public"]["Enums"]["pillar"];
-          summary: string;
-          user_id: string;
-        };
+          created_at: string
+          id: string
+          period: string
+          pillar: Database["public"]["Enums"]["pillar"]
+          summary: string
+          user_id: string
+        }
         Insert: {
-          created_at?: string;
-          id?: string;
-          period: string;
-          pillar: Database["public"]["Enums"]["pillar"];
-          summary: string;
-          user_id: string;
-        };
+          created_at?: string
+          id?: string
+          period: string
+          pillar: Database["public"]["Enums"]["pillar"]
+          summary: string
+          user_id: string
+        }
         Update: {
-          created_at?: string;
-          id?: string;
-          period?: string;
-          pillar?: Database["public"]["Enums"]["pillar"];
-          summary?: string;
-          user_id?: string;
-        };
-        Relationships: [];
-      };
+          created_at?: string
+          id?: string
+          period?: string
+          pillar?: Database["public"]["Enums"]["pillar"]
+          summary?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       pillars: {
         Row: {
-          accent: string;
-          blurb: string | null;
-          created_at: string;
-          icon: string;
-          id: string;
-          label: string;
-          slug: string;
-          sort_order: number;
-          user_id: string;
-        };
+          accent: string
+          blurb: string | null
+          created_at: string
+          icon: string
+          id: string
+          label: string
+          slug: string
+          sort_order: number
+          user_id: string
+        }
         Insert: {
-          accent?: string;
-          blurb?: string | null;
-          created_at?: string;
-          icon?: string;
-          id?: string;
-          label: string;
-          slug: string;
-          sort_order?: number;
-          user_id: string;
-        };
+          accent?: string
+          blurb?: string | null
+          created_at?: string
+          icon?: string
+          id?: string
+          label: string
+          slug: string
+          sort_order?: number
+          user_id: string
+        }
         Update: {
-          accent?: string;
-          blurb?: string | null;
-          created_at?: string;
-          icon?: string;
-          id?: string;
-          label?: string;
-          slug?: string;
-          sort_order?: number;
-          user_id?: string;
-        };
-        Relationships: [];
-      };
+          accent?: string
+          blurb?: string | null
+          created_at?: string
+          icon?: string
+          id?: string
+          label?: string
+          slug?: string
+          sort_order?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
-          avatar_url: string | null;
-          bio: string | null;
-          created_at: string;
-          display_name: string | null;
-          email: string | null;
-          headline: string | null;
-          id: string;
-          links: Json;
-          theme: string;
-          updated_at: string;
-          wallpaper: string | null;
-        };
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          display_name: string | null
+          email: string | null
+          headline: string | null
+          id: string
+          links: Json
+          theme: string
+          updated_at: string
+          wallpaper: string | null
+        }
         Insert: {
-          avatar_url?: string | null;
-          bio?: string | null;
-          created_at?: string;
-          display_name?: string | null;
-          email?: string | null;
-          headline?: string | null;
-          id: string;
-          links?: Json;
-          theme?: string;
-          updated_at?: string;
-          wallpaper?: string | null;
-        };
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          headline?: string | null
+          id: string
+          links?: Json
+          theme?: string
+          updated_at?: string
+          wallpaper?: string | null
+        }
         Update: {
-          avatar_url?: string | null;
-          bio?: string | null;
-          created_at?: string;
-          display_name?: string | null;
-          email?: string | null;
-          headline?: string | null;
-          id?: string;
-          links?: Json;
-          theme?: string;
-          updated_at?: string;
-          wallpaper?: string | null;
-        };
-        Relationships: [];
-      };
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          headline?: string | null
+          id?: string
+          links?: Json
+          theme?: string
+          updated_at?: string
+          wallpaper?: string | null
+        }
+        Relationships: []
+      }
       recents: {
         Row: {
-          icon_url: string | null;
-          id: string;
-          title: string;
-          url: string;
-          user_id: string;
-          visited_at: string;
-        };
+          icon_url: string | null
+          id: string
+          title: string
+          url: string
+          user_id: string
+          visited_at: string
+        }
         Insert: {
-          icon_url?: string | null;
-          id?: string;
-          title: string;
-          url: string;
-          user_id: string;
-          visited_at?: string;
-        };
+          icon_url?: string | null
+          id?: string
+          title: string
+          url: string
+          user_id: string
+          visited_at?: string
+        }
         Update: {
-          icon_url?: string | null;
-          id?: string;
-          title?: string;
-          url?: string;
-          user_id?: string;
-          visited_at?: string;
-        };
-        Relationships: [];
-      };
+          icon_url?: string | null
+          id?: string
+          title?: string
+          url?: string
+          user_id?: string
+          visited_at?: string
+        }
+        Relationships: []
+      }
       settings: {
         Row: {
-          auto_extract: boolean;
-          created_at: string;
-          memory_enabled: boolean;
-          memory_scopes: Json;
-          model: string;
-          persona: string;
-          theme: string;
-          updated_at: string;
-          user_id: string;
-        };
+          auto_extract: boolean
+          created_at: string
+          memory_enabled: boolean
+          memory_scopes: Json
+          model: string
+          persona: string
+          theme: string
+          updated_at: string
+          user_id: string
+        }
         Insert: {
-          auto_extract?: boolean;
-          created_at?: string;
-          memory_enabled?: boolean;
-          memory_scopes?: Json;
-          model?: string;
-          persona?: string;
-          theme?: string;
-          updated_at?: string;
-          user_id: string;
-        };
+          auto_extract?: boolean
+          created_at?: string
+          memory_enabled?: boolean
+          memory_scopes?: Json
+          model?: string
+          persona?: string
+          theme?: string
+          updated_at?: string
+          user_id: string
+        }
         Update: {
-          auto_extract?: boolean;
-          created_at?: string;
-          memory_enabled?: boolean;
-          memory_scopes?: Json;
-          model?: string;
-          persona?: string;
-          theme?: string;
-          updated_at?: string;
-          user_id?: string;
-        };
-        Relationships: [];
-      };
+          auto_extract?: boolean
+          created_at?: string
+          memory_enabled?: boolean
+          memory_scopes?: Json
+          model?: string
+          persona?: string
+          theme?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       threads: {
         Row: {
-          created_at: string;
-          id: string;
-          pillar: string | null;
-          title: string;
-          updated_at: string;
-          user_id: string;
-        };
+          created_at: string
+          id: string
+          pillar: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
         Insert: {
-          created_at?: string;
-          id?: string;
-          pillar?: string | null;
-          title?: string;
-          updated_at?: string;
-          user_id: string;
-        };
+          created_at?: string
+          id?: string
+          pillar?: string | null
+          title?: string
+          updated_at?: string
+          user_id: string
+        }
         Update: {
-          created_at?: string;
-          id?: string;
-          pillar?: string | null;
-          title?: string;
-          updated_at?: string;
-          user_id?: string;
-        };
-        Relationships: [];
-      };
-    };
+          created_at?: string
+          id?: string
+          pillar?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+    }
     Views: {
-      [_ in never]: never;
-    };
+      [_ in never]: never
+    }
     Functions: {
-      [_ in never]: never;
-    };
+      [_ in never]: never
+    }
     Enums: {
-      entry_kind: "done" | "in_progress" | "changed" | "unchanged" | "blocked" | "next";
-      memory_type: "fact" | "decision" | "blocker" | "next_step" | "preference" | "note";
-      pillar: "systems" | "career" | "projects" | "academics";
-    };
+      entry_kind:
+        | "done"
+        | "in_progress"
+        | "changed"
+        | "unchanged"
+        | "blocked"
+        | "next"
+      memory_type:
+        | "fact"
+        | "decision"
+        | "blocker"
+        | "next_step"
+        | "preference"
+        | "note"
+      pillar: "systems" | "career" | "projects" | "academics"
+    }
     CompositeTypes: {
-      [_ in never]: never;
-    };
-  };
-};
+      [_ in never]: never
+    }
+  }
+}
 
-type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">;
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
 
-type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">];
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
   TableName extends (DefaultSchemaTableNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals;
+    schema: keyof DatabaseWithoutInternals
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
     : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals;
+  schema: keyof DatabaseWithoutInternals
 }
   ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
       DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
-      Row: infer R;
+      Row: infer R
     }
     ? R
     : never
-  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
-    ? (DefaultSchema["Tables"] & DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
-        Row: infer R;
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+        Row: infer R
       }
       ? R
       : never
-    : never;
+    : never
 
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
-    keyof DefaultSchema["Tables"] | { schema: keyof DatabaseWithoutInternals },
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends (DefaultSchemaTableNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals;
+    schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals;
+  schema: keyof DatabaseWithoutInternals
 }
   ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-      Insert: infer I;
+      Insert: infer I
     }
     ? I
     : never
   : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
     ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-        Insert: infer I;
+        Insert: infer I
       }
       ? I
       : never
-    : never;
+    : never
 
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
-    keyof DefaultSchema["Tables"] | { schema: keyof DatabaseWithoutInternals },
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends (DefaultSchemaTableNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals;
+    schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals;
+  schema: keyof DatabaseWithoutInternals
 }
   ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-      Update: infer U;
+      Update: infer U
     }
     ? U
     : never
   : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
     ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-        Update: infer U;
+        Update: infer U
       }
       ? U
       : never
-    : never;
+    : never
 
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
-    keyof DefaultSchema["Enums"] | { schema: keyof DatabaseWithoutInternals },
+    | keyof DefaultSchema["Enums"]
+    | { schema: keyof DatabaseWithoutInternals },
   EnumName extends (DefaultSchemaEnumNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals;
+    schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
     : never) = never,
 > = DefaultSchemaEnumNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals;
+  schema: keyof DatabaseWithoutInternals
 }
   ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
     ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
-    : never;
+    : never
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
-    keyof DefaultSchema["CompositeTypes"] | { schema: keyof DatabaseWithoutInternals },
+    | keyof DefaultSchema["CompositeTypes"]
+    | { schema: keyof DatabaseWithoutInternals },
   CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals;
+    schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
     : never) = never,
 > = PublicCompositeTypeNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals;
+  schema: keyof DatabaseWithoutInternals
 }
   ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
   : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
     ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
-    : never;
+    : never
 
 export const Constants = {
   public: {
     Enums: {
-      entry_kind: ["done", "in_progress", "changed", "unchanged", "blocked", "next"],
-      memory_type: ["fact", "decision", "blocker", "next_step", "preference", "note"],
+      entry_kind: [
+        "done",
+        "in_progress",
+        "changed",
+        "unchanged",
+        "blocked",
+        "next",
+      ],
+      memory_type: [
+        "fact",
+        "decision",
+        "blocker",
+        "next_step",
+        "preference",
+        "note",
+      ],
       pillar: ["systems", "career", "projects", "academics"],
     },
   },
-} as const;
+} as const
