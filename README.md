@@ -1,17 +1,28 @@
-# Gardens Zero
+# Garden Zero
 
 > A private digital workspace for notes, conversations, planning, and the links that keep a project moving.
 
-Gardens Zero is a desktop-style personal workspace built around the feeling of a small operating system. Instead of forcing every thought into a list, it gives the user a visual desk: notes can live in movable windows, related work can be grouped into **pillars**, conversations can be saved for later, and frequently used links can be kept in an application dock.
+Garden Zero is a responsive personal workspace built around the feeling of a small operating system. It offers two complementary ways to work: a spatial desktop mode for arranging notes, folders, widgets, and links, and a focused chat mode for capturing and revisiting conversations. Users can move between these modes depending on the device, task, or preferred way of thinking.
 
-The project combines a calm, responsive interface with authenticated persistence, giving each signed-in user a private space for thinking, organizing, and returning to unfinished work.
+The desktop experience is designed for larger screens, where notes can live in movable windows and related work can be grouped into **pillars**. The chat experience is optimized for mobile, with a familiar messaging layout that makes Garden Zero practical on a phone rather than a desktop interface simply compressed into a narrow viewport. On smaller screens, chat mode becomes the natural default while the wider workspace remains available as the responsive layout allows.
+
+The project combines calm visual design with authenticated persistence, giving each signed-in user a private space for thinking, organizing, and returning to unfinished work across desktop and mobile.
+
+## Workspace modes
+
+| Mode | Best for | Experience |
+| --- | --- | --- |
+| **Desktop mode** | Planning, arranging, and exploring work on a larger screen | A spatial desk with floating notes, desktop folders, widgets, wallpapers, a recycle bin, and an app dock. |
+| **Chat mode** | Quick capture, reflection, and mobile use | A focused conversation interface with saved threads, date separators, rename and delete actions, and pillar filing. It is optimized for touch-sized mobile layouts and is the default mode on smaller screens. |
+
+The two modes are part of the same workspace rather than separate products. Notes, conversations, pillars, calendar information, and preferences remain connected through the shared authenticated data model.
 
 ## Core experience
 
 | Workspace area | What is included |
 | --- | --- |
-| **Desk** | Draggable and resizable notes, desktop folders, a recycle bin, contextual placement actions, widgets, and selectable wallpapers. |
-| **Chat mode** | Saved conversations with date separators, rename and delete actions, and the ability to file a conversation into a pillar. Chat mode is the default workspace mode on smaller screens. |
+| **Desk** | Draggable and resizable notes, desktop folders, a recycle bin, contextual placement actions, widgets, and selectable wallpapers in desktop mode. |
+| **Chat mode** | A mobile-friendly, WhatsApp-style conversation surface with saved threads, date separators, rename and delete actions, and the ability to file a conversation into a pillar. |
 | **Pillars** | Personal folders with editable names, descriptions, icons, accent colors, and progress-oriented entries. Starter pillars are available for a new workspace. |
 | **Calendar** | A monthly view with event chips, a day detail panel, and event creation and removal. |
 | **App dock** | A visual set of user-managed links treated as apps, with recent items and shortcuts available from the workspace. |
@@ -119,6 +130,6 @@ The service-role key is server-only and must never be exposed to browser code. C
 
 ## Product direction
 
-Garden Zero is intentionally more spatial than a conventional productivity dashboard. The desk gives notes a place, pillars provide an adaptable vocabulary for grouping work, the dock keeps important links close, and chat offers a lower-friction way to capture ideas on smaller screens.
+Garden Zero is intentionally more flexible than a conventional productivity dashboard. Desktop mode gives notes a place and makes work spatial; chat mode provides a lower-friction, mobile-optimized way to capture ideas and continue conversations; pillars provide an adaptable vocabulary for grouping work; and the dock keeps important links close.
 
-As a portfolio project, it demonstrates authenticated full-stack React development, route-level application structure, persistent CRUD workflows, responsive interaction design, Supabase row-level security, and the ability to carry a product concept from interface direction through working implementation.
+As a portfolio project, it demonstrates authenticated full-stack React development, route-level application structure, persistent CRUD workflows, responsive interaction design across desktop and mobile, Supabase row-level security, and the ability to carry a product concept from interface direction through working implementation.
