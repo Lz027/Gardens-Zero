@@ -55,20 +55,24 @@ function Landing() {
       <section className="mx-auto max-w-3xl px-6 pb-16 pt-16 text-center">
         <GardensLogo className="mx-auto size-40 shadow-2xl" />
         <h1 className="mt-10 text-4xl font-semibold tracking-tight sm:text-5xl">
-          A quiet operating system for{" "}
-          <span className="text-gradient-iris">the whole of your life</span>
+          Your notes desk and{" "}
+          <span className="text-gradient-iris">app dock, in one calm place</span>
         </h1>
         <p className="mx-auto mt-5 max-w-xl text-sm leading-relaxed text-muted-foreground">
-          Four pillars, one memory. Gardens Zero tracks what was done, what changed, what stayed
-          the same and what comes next — and its resident intelligence, Zero, remembers all of it
-          without being asked twice.
+          Write in floating note windows on a desk you arrange yourself, or chat your thoughts out
+          on your phone. Keep the links you live in as apps, one tap away, and file everything under
+          the pillars that matter to you.
         </p>
-        <div className="mt-8 flex justify-center">
+        <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
           <Button asChild size="lg">
             <Link to="/auth">Enter the workspace</Link>
           </Button>
+          <span className="text-xs text-muted-foreground">
+            New here? Everything is explained inside, under the question mark.
+          </span>
         </div>
       </section>
+
 
       <section className="mx-auto grid max-w-4xl gap-3 px-6 pb-24 sm:grid-cols-2">
         {PILLARS.map((pillar) => (
