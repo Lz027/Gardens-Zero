@@ -6,6 +6,13 @@
   NITRO_PRESET = "netlify"
   NODE_VERSION = "22"
 
+# Serve static files from dist first, then hand everything else
+# to the server-rendered function produced by the build.
+[[redirects]]
+  from = "/*"
+  to = "/.netlify/functions/server"
+  status = 200
+
 [dev]
   command = "npm run dev"
   framework = "#custom"
