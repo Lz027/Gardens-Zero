@@ -91,18 +91,41 @@ function AuthPage() {
     setBusy(true);
     try {
       sessionStorage.setItem("gz:redirect", target);
-      const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin,
+
+      // The managed sign-in broker lives on Lovable-hosted origins. When it is
+      // not reachable (self-hosted / Netlify / local), fall back to the direct
+      // provider flow so Google sign-in keeps working everywhere.
+      let brokerAvailable = true;
+      try {
+        const probe = await fetch("/~oauth/initiate", { method: "HEAD", redirect: "manual" });
+        brokerAvailable = probe.status !== 404;
+      } catch {
+        brokerAvailable = false;
+      }
+
+      if (brokerAvailable) {
+        const result = await lovable.auth.signInWithOAuth("google", {
+          redirect_uri: window.location.origin,
+        });
+        if (result.redirected) return;
+        if (!result.error) {
+          navigate({ to: target, replace: true });
+          return;
+        }
+      }
+
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: window.location.origin },
       });
-      if (result.error) throw new Error(result.error.message ?? "Google sign-in failed");
-      if (result.redirected) return;
-      navigate({ to: target, replace: true });
+      if (error) throw error;
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Google sign-in failed");
     } finally {
       setBusy(false);
     }
   }
+
 
 
   return (
