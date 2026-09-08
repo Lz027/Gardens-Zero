@@ -29,7 +29,7 @@ export default defineConfig({
     react(),
     tailwindcss(),
     tsconfigPaths(),
-    ...(deployPreset ? [nitro({ config: { preset: deployPreset } })] : []),
+    ...(deployPreset ? [nitro({ preset: deployPreset })] : []),
   ],
   resolve: {
     alias: {
