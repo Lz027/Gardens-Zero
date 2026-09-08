@@ -119,7 +119,7 @@ The service-role key is server-only and must never be exposed to browser code. C
 
 ### Deploying outside Lovable (Netlify)
 
-No environment variables are required. The backend URL and publishable key are baked into the build through `src/lib/backend-config.ts`, which environment variables override when they are present. `netlify.toml` already sets the build command, the `netlify` server preset, and the publish directory, so connecting the repository to Netlify and deploying is enough. Remember to add the deployed domain to the backend's allowed redirect URLs so sign-in works there.
+No environment variables are required. The backend URL and publishable key are baked into the build by `vite.config.ts`, and matching `VITE_SUPABASE_*` environment variables override them when present. `netlify.toml` sets the build command, the `netlify` server preset, the `dist` publish directory, and the catch-all redirect to the server-rendered function, so connecting the GitHub repository to Netlify and deploying is enough. Remember to add the deployed domain to the backend's allowed redirect URLs so sign-in works there.
 
 
 ## Development commands
