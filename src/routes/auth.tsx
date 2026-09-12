@@ -43,7 +43,7 @@ function AuthPage() {
   const search = useSearch({ from: "/auth" });
   const target = safePath(search.redirect);
 
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [mode, setMode] = useState<"signin" | "signup" | "reset">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
@@ -60,6 +60,14 @@ function AuthPage() {
     event.preventDefault();
     setBusy(true);
     try {
+      if (mode === "reset") {
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: `${window.location.origin}/auth?redirect=${encodeURIComponent(target)}`,
+        });
+        if (error) throw error;
+        setSent(true);
+        return;
+      }
       if (mode === "signup") {
         const { data, error } = await supabase.auth.signUp({
           email,
@@ -126,8 +134,6 @@ function AuthPage() {
     }
   }
 
-
-
   return (
     <main className="fog-surface flex min-h-screen items-center justify-center px-4 py-12">
       <div className="panel w-full max-w-sm rounded-2xl p-7">
@@ -170,20 +176,26 @@ function AuthPage() {
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  required
-                  minLength={6}
-                  autoComplete={mode === "signin" ? "current-password" : "new-password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
+              {mode !== "reset" && (
+                <div className="space-y-1.5">
+                  <Label htmlFor="password">Password</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    required
+                    minLength={6}
+                    autoComplete={mode === "signin" ? "current-password" : "new-password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                </div>
+              )}
               <Button type="submit" className="w-full" disabled={busy}>
-                {mode === "signin" ? "Sign in" : "Create workspace"}
+                {mode === "signin"
+                  ? "Sign in"
+                  : mode === "reset"
+                    ? "Send reset link"
+                    : "Create workspace"}
               </Button>
             </form>
 
@@ -203,10 +215,19 @@ function AuthPage() {
               Continue with Google
             </Button>
 
+            {mode === "signin" && (
+              <button
+                type="button"
+                className="mt-5 w-full text-center text-xs text-muted-foreground transition-colors hover:text-foreground"
+                onClick={() => setMode("reset")}
+              >
+                Forgot your password?
+              </button>
+            )}
             <button
               type="button"
-              className="mt-5 w-full text-center text-xs text-muted-foreground transition-colors hover:text-foreground"
-              onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
+              className="mt-3 w-full text-center text-xs text-muted-foreground transition-colors hover:text-foreground"
+              onClick={() => setMode(mode === "signup" ? "signin" : "signup")}
             >
               {mode === "signin"
                 ? "No workspace yet? Create one"

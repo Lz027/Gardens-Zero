@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { StickyNote, Plus, MessageSquare, LayoutDashboard, FolderPlus } from "lucide-react";
 import { useCreateNote, useCreateNoteFolder, useNotes, useUpdateNote } from "@/lib/desk-queries";
@@ -56,6 +56,14 @@ function Workspace() {
   return (
     <div className="flex h-full min-h-0 flex-col">
       <div className="hidden items-center gap-2 border-b border-border px-3 py-2 md:flex">
+        <div className="ml-auto flex items-center gap-2">
+          <Button asChild size="sm" variant="outline">
+            <Link to="/opportunities">Opportunities</Link>
+          </Button>
+          <Button asChild size="sm" variant="outline">
+            <Link to="/dashboard">Dashboard</Link>
+          </Button>
+        </div>
         <div className="hidden items-center gap-1 rounded-full border border-border p-0.5 md:flex">
           {(
             [

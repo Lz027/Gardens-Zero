@@ -10,9 +10,9 @@
  */
 const env = import.meta.env as Record<string, string | undefined>;
 
-export const SUPABASE_URL = env["VITE_SUPABASE_URL"] || "https://mydjanncsfeatnpnnscx.supabase.co";
+export const SUPABASE_URL = env["VITE_SUPABASE_URL"] || "https://yotwfwyvovgjvleqllqb.supabase.co";
 
 export const SUPABASE_PUBLISHABLE_KEY =
-  env["VITE_SUPABASE_PUBLISHABLE_KEY"] || "sb_publishable_F0i_sEMZF6grsvLWxrZvnw_Om8pIU8f";
+  env["VITE_SUPABASE_ANON_KEY"] || env["VITE_SUPABASE_PUBLISHABLE_KEY"];
 
-export const SUPABASE_PROJECT_ID = env["VITE_SUPABASE_PROJECT_ID"] || "mydjanncsfeatnpnnscx";
+export const SUPABASE_PROJECT_ID = env["VITE_SUPABASE_PROJECT_ID"] || "yotwfwyvovgjvleqllqb";
