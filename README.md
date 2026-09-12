@@ -1,8 +1,8 @@
-# Garden Zero
+# Gardens Zero
 
 > A private digital workspace for notes, conversations, planning, and the links that keep a project moving.
 
-Garden Zero is a responsive personal workspace built around the feeling of a small operating system. It offers two complementary ways to work: a spatial desktop mode for arranging notes, folders, widgets, and links, and a focused chat mode for capturing and revisiting conversations. Users can move between these modes depending on the device, task, or preferred way of thinking.
+Gardens Zero is a responsive personal workspace built around the feeling of a small operating system. It offers two complementary ways to work: a spatial desktop mode for arranging notes, folders, widgets, and links, and a focused chat mode for capturing and revisiting conversations. Users can move between these modes depending on the device, task, or preferred way of thinking.
 
 The desktop experience is designed for larger screens, where notes can live in movable windows and related work can be grouped into **pillars**. The chat experience is optimized for mobile, with a familiar messaging layout that makes Garden Zero practical on a phone rather than a desktop interface simply compressed into a narrow viewport. On smaller screens, chat mode becomes the natural default while the wider workspace remains available as the responsive layout allows.
 
@@ -95,43 +95,6 @@ The database schema lives in `supabase/gardens-zero-schema.sql`. It is organized
 | `apps`, `recents`, `notifications`, and `settings` | Dock links, recent activity, alerts, and workspace preferences. |
 
 Theme and selected workspace preferences also use browser persistence so the interface remains consistent between visits.
-
-## Local development
-
-Install dependencies and start the development server:
-
-```sh
-npm install
-npm run dev
-```
-
-The development server runs on port `8080` by default. The application expects Supabase configuration for browser and server operations:
-
-```sh
-VITE_SUPABASE_URL=your-supabase-project-url
-VITE_SUPABASE_PUBLISHABLE_KEY=your-supabase-publishable-key
-SUPABASE_URL=your-supabase-project-url
-SUPABASE_PUBLISHABLE_KEY=your-supabase-publishable-key
-SUPABASE_SERVICE_ROLE_KEY=your-server-only-service-role-key
-```
-
-The service-role key is server-only and must never be exposed to browser code. Configure the authentication redirect URLs and Google provider before testing OAuth.
-
-### Deploying outside Lovable (Netlify)
-
-No environment variables are required. The backend URL and publishable key are baked into the build by `vite.config.ts`, and matching `VITE_SUPABASE_*` environment variables override them when present. `netlify.toml` sets the build command, the `netlify` server preset, the `dist` publish directory, and the catch-all redirect to the server-rendered function, so connecting the GitHub repository to Netlify and deploying is enough. Remember to add the deployed domain to the backend's allowed redirect URLs so sign-in works there.
-
-
-## Development commands
-
-| Command | Purpose |
-| --- | --- |
-| `npm run dev` | Start the Vite development server. |
-| `npm run build` | Create the production build. |
-| `npm run build:dev` | Create a development-mode build. |
-| `npm run preview` | Preview the production build locally. |
-| `npm run lint` | Run ESLint across the project. |
-| `npm run format` | Format source files with Prettier. |
 
 ## Product direction
 
